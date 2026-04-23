@@ -64,7 +64,7 @@
     "systemjs": "^0.21.6",
     "systemjs-plugin-babel": "0.0.25",
     "tslib": "^2.0.0",
-    "url-polyfill": "^1.1.12",
+    "url-polyfill": "^1.1.14",
     "web-animations-js": "^2.3.2",
     "whatwg-fetch": "^3.0.0",
     "zone.js": "~0.11.5"

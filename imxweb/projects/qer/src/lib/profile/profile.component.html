@@ -46,6 +46,7 @@
             </form>
           </mat-card-content>
         </mat-card>
+        <!-- US1151649 Remove Save button from Profile -> Main Data 
         <div class="imx-button-bar">
           <button
             mat-raised-button
@@ -59,8 +60,10 @@
             {{ '#LDS#Save' | translate }}
           </button>
         </div>
+        -->
       </ng-template>
     </mat-tab>
+    <!-- US1151649 Remove the below tabs from Profile
     <mat-tab label="{{ '#LDS#Heading Email Notifications' | translate }}" data-imx-identifier="profile-email" *ngIf="hasMailSubscriptions">
       <ng-template matTabContent>
         <imx-mail-subscriptions [uidPerson]="userUid" [mailInfo]="mailInfo"></imx-mail-subscriptions>
@@ -76,6 +79,7 @@
         <imx-security-keys></imx-security-keys>
       </ng-template>
     </mat-tab>
+    -->
     <ng-container *ngFor="let tab of dynamicTabs">
       <mat-tab [label]="tab.inputData.label | translate">
         <ng-template matTabContent>

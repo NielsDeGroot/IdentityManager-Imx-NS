@@ -105,6 +105,7 @@ export class IdentityRoleMembershipsService {
       withAnalysis: true
     });
 
+    /* US1151649 Disable Cost centers menu
     this.addTarget({
       table: this.profitCenterTag,
       type: PortalPersonRolemembershipsProfitcenter,
@@ -119,6 +120,7 @@ export class IdentityRoleMembershipsService {
       ),
       withAnalysis: true
     });
+    */
 
     this.addTarget({
       table: this.departmentTag,
@@ -150,6 +152,7 @@ export class IdentityRoleMembershipsService {
       withAnalysis: true
     });
 
+    /* US1151649 Disable Shops menu 
     this.addTarget({
       table: this.itShopOrg,
       type: PortalPersonRolemembershipsItshoporg,
@@ -167,5 +170,6 @@ export class IdentityRoleMembershipsService {
       ),
       withAnalysis: false
     });
+    */
   }
 }

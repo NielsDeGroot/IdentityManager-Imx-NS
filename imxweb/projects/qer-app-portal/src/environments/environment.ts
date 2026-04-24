@@ -30,7 +30,8 @@
 
 export const environment = {
   production: false,
-  clientUrl: 'http://localhost:8182',
+  //clientUrl: 'http://localhost:8182',
+  clientUrl: 'https://itshop.groot.net/apiserver922',
   appName: 'qer-app-portal',
   appVersion: '1.0.0'
 };

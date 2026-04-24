@@ -7,6 +7,7 @@
     "start:remote-dev": "ng serve -c remote-dev",
     "start:remote-qs": "ng serve -c remote-qs",
     "build": "ng build",
+    "build:dynamic": "ng build --configuration dynamic",
     "build:watch": "ng build --watch --configuration development",
     "build:watch:dynamic": "ng build --watch --configuration dynamic",
     "build:app": "ng build --aot --configuration production",

@@ -199,12 +199,14 @@
     <button mat-menu-item *ngIf="canAnalyzeRisk" (click)="analyzeRisk()" data-imx-identifier="identity-sidesheet-button-analyze-risk">
       <span translate>#LDS#Analyze risk</span>
     </button>
+    <!-- US1151650 Disable Generate passcode and Assign New Manager options
     <button mat-menu-item *ngIf="canGeneratePasscode" (click)="generatePasscode()" data-imx-identifier="identity-sidesheet-button-create-passcode">
       <span translate>#LDS#Create passcode</span>
     </button>
     <button mat-menu-item *ngIf="data?.isAdmin === false && data.canEdit" (click)="onAssignManager()" data-imx-identifier="identity-sidesheet-assign-manager">
       <span translate>#LDS#Assign to new manager</span>
     </button>
+    -->
   </mat-menu>
   <button
     *ngIf="data.canEdit"

@@ -51,6 +51,7 @@ import { UserModelService } from '../user/user-model.service';
 import { NewRequestOrchestrationService } from './new-request-orchestration.service';
 import { SelectedProductSource } from './new-request-selected-products/selected-product-item.interface';
 import { NewRequestSelectionService } from './new-request-selection.service';
+import { Router } from '@angular/router';
 
 // TODO: not used anymore - can be removed
 @Injectable({
@@ -74,7 +75,8 @@ export class NewRequestAddToCartService {
     private readonly snackbar: SnackBarService,
     private readonly sidesheetService: EuiSidesheetService,
     private readonly translate: TranslateService,
-    private readonly userModelService: UserModelService
+    private readonly userModelService: UserModelService,
+    private readonly router: Router
   ) {}
 
   public async addItemsToCart(): Promise<void> {
@@ -99,6 +101,7 @@ export class NewRequestAddToCartService {
     await this.addOrgsToCart();
 
     // show snackbar
+    let succes = false;
     if (this.savedItems !== this.possibleItems) {
       this.snackbar.open({
         key:
@@ -112,10 +115,16 @@ export class NewRequestAddToCartService {
         key: '#LDS#{0} products have been successfully added to your shopping cart.',
         parameters: [this.savedItems],
       });
+      succes = true;
     }
     await this.userModelService.reloadPendingItems();
 
     this.selectionService.clearProducts();
+
+    // US1151648 redirect to shopping cart after moving the items to cart.
+    if (succes) {
+       this.router.navigate(['shoppingcart']);
+    }
   }
 
   private getRecipients(): ValueStruct<string>[] {

@@ -246,7 +246,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
         const column = this.selectedIdentity.GetColumn(columnName);
         return {
           column,
-          isReadOnly: () => !column.GetMetadata().CanEdit(),
+          // US1151649 Make Profile -> Main Data read-only 
+          // isReadOnly: () => !column.GetMetadata().CanEdit(),
+          isReadOnly: () => true,
           hint: this.hints[columnName]
         };
       });

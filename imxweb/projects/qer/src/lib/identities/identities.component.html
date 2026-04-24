@@ -60,6 +60,7 @@
     <eui-icon icon="ellipsisvertical"></eui-icon>
     {{ '#LDS#Actions' | translate }}
   </button>
+  <!-- US1151650 Disable create identity button
   <button
     *ngIf="isPersonAdmin || isManagerForPersons"
     mat-raised-button
@@ -71,6 +72,7 @@
     <eui-icon icon="add"></eui-icon>
     <span translate>#LDS#Create identity</span>
   </button>
+  -->
   <mat-menu #menu="matMenu">
     <button *ngIf="isManagerForPersons && !isAdmin" mat-menu-item data-imx-identifier="identities-menu-item-download-report" (click)="personsManagedReport()">
       {{ '#LDS#Download report on identities you are directly responsible for' | translate }}

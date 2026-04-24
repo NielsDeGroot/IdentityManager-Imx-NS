@@ -21,6 +21,20 @@
       "webRoot": "${workspaceFolder}"
     },
     {
+      "name": "QER App Portal (MS Edge)",
+      "request": "launch",
+      "type": "pwa-msedge",
+      "url": "http://localhost:4200/",
+      "webRoot": "${workspaceFolder}"
+    },
+    {
+      "name": "QER App Portal (MS Edge - SSL)",
+      "request": "launch",
+      "type": "pwa-msedge",
+      "url": "https://localhost:4200/",
+      "webRoot": "${workspaceFolder}"
+    },
+    {
       "name": "QER Ops Web (Chrome)",
       "request": "launch",
       "type": "pwa-chrome",

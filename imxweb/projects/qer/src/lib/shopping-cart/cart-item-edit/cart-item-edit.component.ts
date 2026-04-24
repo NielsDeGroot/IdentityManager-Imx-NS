@@ -122,16 +122,21 @@ export class CartItemEditComponent implements OnInit, OnDestroy {
   }
 
   private initColumns(): void {
+    /* US1151648 Disable order reason, order justification and Priority columns in Edit Shooping Cart Item
     let defaultColumns = [this.shoppingCartItem.OrderReason.Column, this.shoppingCartItem.UID_QERJustificationOrder.Column];
     if (!this.data.multiple) {
       defaultColumns.push(this.shoppingCartItem.PWOPriority.Column);
     }
+    */
+    let defaultColumns = [this.shoppingCartItem.OrderReason.Column];
     if (this.shoppingCartItem.RequestType.value === 'Prolongate' && !this.data.multiple) {
       defaultColumns.push(this.shoppingCartItem.ProlongationDate.Column);
     } else if (['Unsubscribe', 'UnsubscribeWithDate'].includes(this.shoppingCartItem.RequestType.value) && !this.data.multiple) {
       defaultColumns.push(this.shoppingCartItem.ValidUntilUnsubscribe.Column);
+    /* US1151648 Disable Valid From, Valid Until columns in Edit Shooping Cart Item  
     } else {
       defaultColumns.push(this.shoppingCartItem.ValidFrom.Column, this.shoppingCartItem.ValidUntil.Column);
+    */
     }
 
     this.orderReasonType = this.shoppingCartItem.OrderReasonType.value;

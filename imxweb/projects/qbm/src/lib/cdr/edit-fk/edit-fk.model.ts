@@ -1,13 +1,15 @@
+// NS20260424 https://github.com/OneIdentity/IdentityManager.Imx/issues/481
 import { IEntity, IForeignKeyInfo } from 'imx-qbm-dbts';
+import { CdrFactoryService } from '../cdr-factory.service';
 
 
 export function getKey(entity: IEntity, fkRelations: IForeignKeyInfo[]): string | undefined {
   if (fkRelations && fkRelations.length > 1) {
-    const xObjectKeyColumn = entity.GetColumn('XObjectKey');
+    const xObjectKeyColumn = CdrFactoryService.tryGetColumn(entity, 'XObjectKey');
     return xObjectKeyColumn ? xObjectKeyColumn.GetValue() : undefined;
   }
 
-    const parentColumn = entity.GetColumn(fkRelations[0].ColumnName);
+    const parentColumn = CdrFactoryService.tryGetColumn(entity, fkRelations[0].ColumnName);
     if (parentColumn) {
       return parentColumn.GetValue();
     }

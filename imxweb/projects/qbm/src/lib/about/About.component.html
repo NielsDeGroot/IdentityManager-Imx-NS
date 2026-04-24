@@ -8,6 +8,9 @@
         <div class="imx-productNameVersion" data-imx-identifier="ProductName and Version">
           <div>{{ product['Name'] }}</div>
           <div>{{ product['Version'] }}</div>
+          <!-- // NS20260424 Update HTML versions -->
+          <div>{{ product['HtmlVersion'] }}</div>
+          <div>{{ product['HtmlCustomVersion'] }}</div>
         </div>
         <div class="imx-productCopyright" data-imx-identifier="Patents, Trademark, Copyright">
           <div>{{ '#LDS#{0} All rights reserved.' | translate | ldsReplace: product['Copyright'] }}</div>

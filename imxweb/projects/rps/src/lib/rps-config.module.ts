@@ -34,12 +34,13 @@ import { EditReportComponent } from './reports/edit-report.component';
 import { EditReportModule } from './reports/edit-report.module';
 import { ReportButtonModule } from './report-button/report-button.module';
 import {StatisticReportButtonModule} from './statistic-report-button/statistic-report-button.module';
+import { RpsAdminGuardService } from './guards/rps-admin-guard.service'; // NS20260424 Make reports menu only available for vi_4_RPSADMIN_ADMIN
 
 const routes: Routes = [
   {
     path: 'reports',
     component: EditReportComponent,
-    canActivate: [RouteGuardService],
+    canActivate: [RpsAdminGuardService],
     resolve: [RouteGuardService],
     data:{
       contextId: HELP_CONTEXTUAL.Reports

@@ -79,11 +79,18 @@
       </imx-data-table-column>
       <imx-data-table-column [entityColumn]="productApi.entitySchema?.Columns['OrderableStatus']" columnLabel="{{ '#LDS#Status' | translate }}" align="center">
         <ng-template let-prod>
-          <div *ngIf="productDetailsService.valueContains(prod.OrderableStatus?.value, ['PERSONHASOBJECT', 'PERSONHASASSIGNMENTORDER', 'ASSIGNED'])" class="imx-request-col-status">
+          <!-- NS20260424 Make products in shopping cart or actively assigned not requestable
+          <div *ngIf="productDetailsService.valueContains(prod.OrderableStatus?.value, ['PERSONHASOBJECT', 'PERSONHASASSIGNMENTORDER', 'ASSIGNED'])" class="imx-request-col-status"></div>
+          -->
+          <div *ngIf="productDetailsService.valueContains(prod.OrderableStatus?.value, ['PERSONHASASSIGNMENTORDER', 'ASSIGNED'])" class="imx-request-col-status">
             <eui-icon
               icon="approvals"
               [matTooltip]="'#LDS#This product has already been assigned to {0}.' | translate | ldsReplace : recipients.Column.GetDisplayValue()"
             ></eui-icon>
+          </div>
+          <!-- NS20260424 Make products in shopping cart or actively assigned not requestable -->
+          <div *ngIf="productDetailsService.valueContains(prod.OrderableStatus?.value, 'PERSONHASOBJECT')" class="imx-request-col-status">
+            <eui-icon icon="role" [matTooltip]="'#LDS#The entitlement in this product is already assigned to {0}.' | translate | ldsReplace: recipients.Column.GetDisplayValue()"></eui-icon>
           </div>
           <div *ngIf="productDetailsService.valueContains(prod.OrderableStatus?.value, 'ORDER')" class="imx-request-col-status">
             <eui-icon icon="request" [matTooltip]="'#LDS#This product has already been requested.' | translate"></eui-icon>

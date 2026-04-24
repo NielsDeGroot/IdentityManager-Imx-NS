@@ -61,6 +61,7 @@ export class EditReportComponent implements OnInit, OnDestroy {
 
   public busyService = new BusyService();
   public entitySchema = this.reportService.reportSchema;
+  public isRpsAdmin: boolean; // NS20260424 Make reports menu only available for vi_4_RPSADMIN_ADMIN
 
   private readonly subscriptions: Subscription[] = [];
 
@@ -76,12 +77,12 @@ export class EditReportComponent implements OnInit, OnDestroy {
   ) {}
 
   public async ngOnInit(): Promise<void> {
-    const isRpsAdmin = await this.rpsPermissionService.isRpsAdmin();
+    this.isRpsAdmin = await this.rpsPermissionService.isRpsAdmin();
     this.dstWrapper = new DataSourceWrapper(
       (state, requestOpts, isInitial) =>
         isInitial
           ? Promise.resolve({ totalCount: 0, Data: [] })
-          : isRpsAdmin
+          : this.isRpsAdmin
           ? this.reportService.getAllReports(state)
           : this.reportService.getReportsOwnedByUser(state),
       [this.entitySchema.Columns[DisplayColumns.DISPLAY_PROPERTYNAME]],

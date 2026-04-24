@@ -49,7 +49,8 @@
       <eui-icon icon="delete"></eui-icon>
       {{ '#LDS#Delete' | translate }}
     </button>
-    <button mat-raised-button color="primary" (click)="createNew()">
+    <!-- NS20260424 Make reports menu only available for vi_4_RPSADMIN_ADMIN -->
+    <button *ngIf= "isRpsAdmin" mat-raised-button color="primary" (click)="createNew()">
       <eui-icon icon="add"></eui-icon>
       {{ '#LDS#Create report' | translate }}
     </button>

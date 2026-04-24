@@ -39,6 +39,7 @@ import {
   IWriteValue,
   LocalProperty,
   ValueStruct,
+  MultiValue, // NS20260424 Make products in shopping cart or actively assigned not requestable
 } from 'imx-qbm-dbts';
 
 import { TranslateService } from '@ngx-translate/core';
@@ -90,7 +91,12 @@ export class NewRequestOrchestrationService implements OnDestroy {
   public set currentProductSource(value: CurrentProductSource) {
     value.dst.itemStatus = {
       enabled: (prod: PortalShopServiceitems): boolean => {
-        return prod.IsRequestable === undefined || prod.IsRequestable?.value;
+        // NS20260424 Make products in shopping cart or actively assigned not requestable
+        if (this.valueContains(prod.OrderableStatus?.value, ['PERSONHASOBJECT', 'CART'])) {
+          return prod.IsRequestable === undefined || false;
+        } else {
+          return prod.IsRequestable === undefined || prod.IsRequestable?.value;
+        } 
       },
     };
     this.currentProductSourceProperty = value;
@@ -418,5 +424,14 @@ export class NewRequestOrchestrationService implements OnDestroy {
     if (person && person.Data.length) {
       return person.Data[0].GetEntity().GetDisplay();
     }
+  }
+
+  // NS20260424 Make products in shopping cart or actively assigned not requestable
+  public valueContains(input: string, values: string | string[]): boolean {
+    const inputValues = MultiValue.FromString(input).GetValues();
+    if (typeof values === 'string') {
+      return inputValues.includes(values);
+    }
+    return inputValues.findIndex((i) => values.includes(i)) !== -1;
   }
 }

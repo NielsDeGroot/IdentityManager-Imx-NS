@@ -48,6 +48,8 @@ import { EditReportComponent } from './edit-report.component';
 import { EditReportSidesheetComponent } from './edit-report-sidesheet/edit-report-sidesheet.component';
 import { EditReportSqlWizardService } from './editreport-sqlwizard.service';
 import { RpsPermissionsService } from '../admin/rps-permissions.service';
+import { ProjectConfig } from 'imx-api-qer';
+import { isRpsAdmin } from '../admin/permissions-helper';
 
 @NgModule({
   declarations: [
@@ -90,11 +92,12 @@ export class EditReportModule {
 
   private setupMenu(): void {
     this.menuService.addMenuFactories(
-      (preProps: string[], features: string[]) => {
+      // NS20260424 Make reports menu only available for vi_4_RPSADMIN_ADMIN
+      (preProps: string[], features: string[], projectConfig: ProjectConfig, groups: string[]) => {
 
         const items: MenuItem[] = [];
 
-        if (preProps.includes('REPORT_SUBSCRIPTION')) {
+        if (preProps.includes('REPORT_SUBSCRIPTION') && isRpsAdmin(groups)) {
           items.push(
             {
               id: 'RPS_Reports',

@@ -22,6 +22,7 @@
   </div>
 </mat-card>
 
+<!-- NS20260426 Hide B-role and S-role create buttons
 <div class="data-explorer-bottom-button-row">
   <button mat-stroked-button data-imx-identifier="roles-overview-button-restore" (click)="restoreDeletedRole()" *ngIf="restoreHandler" class="imx-right-button">
     <span translate>#LDS#Restore deleted object</span>
@@ -31,6 +32,7 @@
     <span translate>{{ getCreationText() }}</span>
   </button>
 </div>
+-->
 
 <ng-template #pageView>
   <div class="imx-page-card">
@@ -83,6 +85,7 @@
     </imx-data-table-column>
     <imx-data-table-generic-column *ngIf="hasHierarchy && canCreate" columnName="actions" [columnLabel]="''">
       <ng-template let-item>
+        <!-- NS20260426 Hide B-role and S-role create buttons
         <div class="imx-button-column">
           <button
             mat-stroked-button
@@ -93,6 +96,7 @@
             <span translate>{{ getChildCreationText() }}</span>
           </button>
         </div>
+        -->
       </ng-template>
     </imx-data-table-generic-column>
   </imx-data-table>

@@ -203,10 +203,10 @@
     <button mat-menu-item *ngIf="canGeneratePasscode" (click)="generatePasscode()" data-imx-identifier="identity-sidesheet-button-create-passcode">
       <span translate>#LDS#Create passcode</span>
     </button>
-    <button mat-menu-item *ngIf="data?.isAdmin === false && data.canEdit" (click)="onAssignManager()" data-imx-identifier="identity-sidesheet-assign-manager">
+    -->
+    <button mat-menu-item *ngIf="data?.canAssignNewManager === true && data.canEdit" (click)="onAssignManager()" data-imx-identifier="identity-sidesheet-assign-manager">
       <span translate>#LDS#Assign to new manager</span>
     </button>
-    -->
   </mat-menu>
   <button
     *ngIf="data.canEdit"

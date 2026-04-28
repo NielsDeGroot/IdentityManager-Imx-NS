@@ -117,6 +117,7 @@ export class DataExplorerIdentitiesComponent implements OnInit, OnDestroy, SideN
   public isManagerForPersons: boolean;
   public isPersonAdmin: boolean;
   public isAuditor: boolean;
+  public canAssignNewManager: boolean;
   public extensions: IExtension[] = [];
 
   private projectConfig: ProjectConfig;
@@ -158,6 +159,7 @@ export class DataExplorerIdentitiesComponent implements OnInit, OnDestroy, SideN
         (this.currentUser = session.UserUid), (this.isManagerForPersons = await qerPermissionService.isPersonManager());
         this.isPersonAdmin = await qerPermissionService.isPersonAdmin();
         this.isAuditor = await qerPermissionService.isAuditor();
+        this.canAssignNewManager = await qerPermissionService.canAssignNewManager();
       }
     });
   }
@@ -454,6 +456,7 @@ export class DataExplorerIdentitiesComponent implements OnInit, OnDestroy, SideN
           projectConfig: this.projectConfig,
           selectedIdentity: identity,
           canEdit: this.isPersonAdmin || this.isManagerForPersons,
+          canAssignNewManager: this.canAssignNewManager,
         },
         testId: 'identities-view-identity-sidesheet',
       })

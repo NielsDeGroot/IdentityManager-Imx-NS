@@ -44,6 +44,7 @@ import {
   isAuditor,
   isStatistics,
   isTsbNameSpaceAdminBase,
+  canAssignNewManager,
 } from './qer-permissions-helper';
 
 @Injectable({
@@ -99,5 +100,8 @@ export class QerPermissionsService {
   }
   public async isTsbNameSpaceAdminBase(): Promise<boolean> {
     return isTsbNameSpaceAdminBase((await this.userService.getGroups()).map((group) => group.Name));
+  }
+  public async canAssignNewManager(): Promise<boolean> {
+    return canAssignNewManager((await this.userService.getFeatures()).Features);
   }
 }

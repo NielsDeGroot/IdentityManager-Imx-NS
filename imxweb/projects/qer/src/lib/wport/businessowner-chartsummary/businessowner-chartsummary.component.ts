@@ -51,6 +51,7 @@ export class BusinessOwnerChartSummaryComponent implements OnInit {
     return !this.dashboardService.isBusy;
   }
   public allReportsCount: number;
+  public canAssignNewManager: boolean;
 
   private projectConfig: ProjectConfig;
 
@@ -75,7 +76,7 @@ export class BusinessOwnerChartSummaryComponent implements OnInit {
       this.ownerships = userConfig.Ownerships;
 
       this.projectConfig = await this.configService.getConfig();
-
+      this.canAssignNewManager = await this.qerPermissions.canAssignNewManager();
       await this.getData();
     } finally {
       busy.endBusy();
@@ -117,7 +118,8 @@ export class BusinessOwnerChartSummaryComponent implements OnInit {
           isAdmin: false,
           projectConfig: this.projectConfig,
           selectedIdentity,
-          canEdit: true
+          canEdit: true,
+          canAssignNewManager: this.canAssignNewManager
         },
       })
       .afterClosed()

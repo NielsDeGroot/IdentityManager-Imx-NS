@@ -86,6 +86,7 @@ export class IdentitySidesheetComponent implements OnInit, OnDestroy {
       projectConfig: QerProjectConfig;
       selectedIdentity: PortalPersonReports | PortalAdminPerson;
       canEdit: boolean;
+      canAssignNewManager: boolean;
     },
     public identities: IdentitiesService,
     private readonly reports: IdentitiesReportsService,

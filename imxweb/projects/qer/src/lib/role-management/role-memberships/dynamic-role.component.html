@@ -1,5 +1,6 @@
 <div class="imx-tab-content-body">
   <mat-spinner *ngIf="busy"></mat-spinner>
+  <!-- NS20260429 Hide 'Create dynamic role' option
   <ng-container *ngIf="!busy && !sqlExpression">
     <eui-alert condensed="true" [colored]="true" type="info">
       <div class="margin">{{ LdsNoDynamicRole | translate }}</div>
@@ -8,6 +9,7 @@
       </button>
     </eui-alert>
   </ng-container>
+  -->
   <ng-container *ngIf="sqlExpression">
     <eui-alert class="helper-alert" *ngIf="sqlExpression.IsUnsupported" condensed="true" [colored]="true" type="info">
       {{ LdsUnsupportedExpression | translate }}

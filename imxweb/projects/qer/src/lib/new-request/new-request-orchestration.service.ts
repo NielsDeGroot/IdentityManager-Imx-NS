@@ -91,9 +91,9 @@ export class NewRequestOrchestrationService implements OnDestroy {
   public set currentProductSource(value: CurrentProductSource) {
     value.dst.itemStatus = {
       enabled: (prod: PortalShopServiceitems): boolean => {
-        // NS20260424 Make products in shopping cart or actively assigned not requestable
-        if (this.valueContains(prod.OrderableStatus?.value, ['PERSONHASOBJECT', 'CART'])) {
-          return prod.IsRequestable === undefined || false;
+        // NS20260429 Make products in shopping cart or actively assigned not requestable
+        if (this.valueContains(prod.OrderableStatus?.value, ['PERSONHASASSIGNMENTORDER', 'PERSONHASOBJECT', 'CART'])) {
+          return false;
         } else {
           return prod.IsRequestable === undefined || prod.IsRequestable?.value;
         } 

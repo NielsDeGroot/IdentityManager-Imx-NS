@@ -64,6 +64,7 @@
       </div>
     </div>
   </mat-tab>
+  <!-- NS20260501 Hide tab
   <mat-tab label="{{ '#LDS#Heading Hyperview' | translate }}" *ngIf="this.relatedOptions?.length > 0">
     <ng-template matTabContent>
       <div eui-sidesheet-content class="imx-attestation-case-hyperview">
@@ -79,6 +80,7 @@
       </div>
     </ng-template>
   </mat-tab>
+  -->
 
   <mat-tab [label]="'#LDS#History' | translate" *ngIf="isHistoryAvailable">
     <ng-template matTabContent>

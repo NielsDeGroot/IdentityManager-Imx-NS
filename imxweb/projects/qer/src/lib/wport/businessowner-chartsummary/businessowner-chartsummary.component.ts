@@ -104,7 +104,7 @@ export class BusinessOwnerChartSummaryComponent implements OnInit {
       this.errorHandler.handleError('Identity could not be loaded.');
       return;
     }
-
+    
     await this.sideSheet
       .open(IdentitySidesheetComponent, {
         title: await this.translate.get('#LDS#Heading Edit Identity').toPromise(),
@@ -119,7 +119,7 @@ export class BusinessOwnerChartSummaryComponent implements OnInit {
           projectConfig: this.projectConfig,
           selectedIdentity,
           canEdit: true,
-          canAssignNewManager: this.canAssignNewManager
+          canAssignNewManager: this.canAssignNewManager && identity.GetEntity().GetColumn('ImportSource').GetValue() === 'DERDE'
         },
       })
       .afterClosed()

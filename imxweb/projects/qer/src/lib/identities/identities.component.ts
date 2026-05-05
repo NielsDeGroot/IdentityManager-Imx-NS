@@ -443,6 +443,7 @@ export class DataExplorerIdentitiesComponent implements OnInit, OnDestroy, SideN
   }
 
   private async viewIdentity(identity: PortalAdminPerson | PortalPersonReports): Promise<void> {
+   
     await this.sideSheet
       .open(IdentitySidesheetComponent, {
         title: await this.translate.get('#LDS#Heading Edit Identity').toPromise(),
@@ -456,7 +457,7 @@ export class DataExplorerIdentitiesComponent implements OnInit, OnDestroy, SideN
           projectConfig: this.projectConfig,
           selectedIdentity: identity,
           canEdit: this.isPersonAdmin || this.isManagerForPersons,
-          canAssignNewManager: this.canAssignNewManager,
+          canAssignNewManager: this.canAssignNewManager && identity.GetEntity().GetColumn('ImportSource').GetValue() === 'DERDE',
         },
         testId: 'identities-view-identity-sidesheet',
       })

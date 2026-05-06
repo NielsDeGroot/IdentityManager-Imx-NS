@@ -23,7 +23,7 @@
         "ServerConfig/RoleMgmtConfig/Allow_Roles_Merge_By_Business_Owner": false,
         "ServerConfig/RoleMgmtConfig/Allow_Roles_Merge_Different_Organisation_Type": false,
         "ServerConfig/RoleMgmtConfig/Allow_Roles_Merge_Different_Role_Class": false,
-        "ServerConfig/VI_Employee_Person_Filter": "uid_person in (select uid_person from person where importSource = 'DERDE' or importSource = 'AFAS' or importSource = 'SAPHR')",
+        "ServerConfig/VI_Employee_Person_Filter": "uid_person in ( select uid_person from QER_VEditEmployee where uid_personhead = '%useruid%') and IdentityType = N'Primary'",
         "AttestationConfig/AttestationApprovalView/AdditionalTableColumns": [
           "StructureDisplay1",
           "StructureDisplay2"
@@ -123,7 +123,8 @@
           "DialogUser",
           "RoleBasedPerson",
           "RoleBasedGeneric"
-        ]
+        ],
+        "PropertyConfig/MethodConfiguration/admin_person/WhereClause": "IdentityType = N'Primary'\nAND (\n\tEXISTS (\n\t\tSELECT 1\n\t\tFROM PersonInAErole\n\t\tWHERE UID_AERole = 'QER-AEROLE-PERSONADMIN-ADMIN'\n\t\tAND UID_Person = '%useruid%'\n\t\t)\n\tOR UID_Person IN (\n\t\tSELECT UID_Person\n\t\tFROM Person\n\t\tWHERE ImportSource = N'DERDE'\n\t\tAND UID_Department IN (\n\t\t\tSELECT UID_Department\n\t\t\tFROM Department\n\t\t\tWHERE ImportSource = N'DERDE'\n\t\t\tAND UID_Department IN (\n\t\t\t\tSELECT UID_Department\n\t\t\t\tFROM AERole\n\t\t\t\tWHERE UID_Department IS NOT NULL\n\t\t\t\tAND UID_AERole IN (\n\t\t\t\t\tSELECT UID_AERole\n\t\t\t\t\tFROM PersonInAErole\n\t\t\t\t\tWHERE UID_Person = '%UserUID%'\n\t\t\t\t\t)\n\t\t\t\t)\n\t\t\t)\n\t\t)\n\t)"
       }
     },
     {

@@ -98,7 +98,7 @@
     "ng-mocks": "^14.15.1",
     "ng-packagr": "^14.2.2",
     "protractor": "^7.0.0",
-    "terser": "^5.15.1",
+    "terser": "^5.46.2",
     "ts-node": "~7.0.0",
     "tslint": "~6.1.0",
     "typemoq": "^2.1.0",

@@ -133,10 +133,12 @@ export class CartItemEditComponent implements OnInit, OnDestroy {
       defaultColumns.push(this.shoppingCartItem.ProlongationDate.Column);
     } else if (['Unsubscribe', 'UnsubscribeWithDate'].includes(this.shoppingCartItem.RequestType.value) && !this.data.multiple) {
       defaultColumns.push(this.shoppingCartItem.ValidUntilUnsubscribe.Column);
-    /* US1151648 Disable Valid From, Valid Until columns in Edit Shooping Cart Item  
+    /* NS20260527 Don't show Valid From column for all product requests and don't show Valid until for Multi requestable/unsubscribable resources
     } else {
       defaultColumns.push(this.shoppingCartItem.ValidFrom.Column, this.shoppingCartItem.ValidUntil.Column);
     */
+    } else if (this.shoppingCartItem.TableName.value !== 'QERReuseUS'){
+      defaultColumns.push(this.shoppingCartItem.ValidUntil.Column);
     }
 
     this.orderReasonType = this.shoppingCartItem.OrderReasonType.value;

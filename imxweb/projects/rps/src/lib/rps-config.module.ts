@@ -35,6 +35,7 @@ import { EditReportModule } from './reports/edit-report.module';
 import { ReportButtonModule } from './report-button/report-button.module';
 import {StatisticReportButtonModule} from './statistic-report-button/statistic-report-button.module';
 import { RpsAdminGuardService } from './guards/rps-admin-guard.service'; // NS20260424 Make reports menu only available for vi_4_RPSADMIN_ADMIN
+import { SubscriptionsComponent } from './subscriptions/subscriptions.component';
 
 const routes: Routes = [
   {
@@ -45,6 +46,13 @@ const routes: Routes = [
     data:{
       contextId: HELP_CONTEXTUAL.Reports
     }
+  },
+  /* NS20262916 Move Report subscriptions from Profile to Menu Bar */
+  {
+    path: 'reportsubscriptions',
+    component: SubscriptionsComponent,
+    canActivate: [RouteGuardService],
+    resolve: [RouteGuardService]
   }
 ];
 

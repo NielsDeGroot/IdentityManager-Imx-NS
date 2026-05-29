@@ -34,6 +34,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import {
   CdrModule,
+  ClassloggerService,
   ConfirmationModule,
   DataSourceToolbarModule,
   DataTableModule,
@@ -41,7 +42,9 @@ import {
   MultiSelectFormcontrolModule,
   UserMessageModule,
   RouteGuardService,
-  BusyIndicatorModule
+  BusyIndicatorModule,
+  MenuItem,
+  MenuService,
 } from 'qbm';
 import { ReportSelectorComponent } from './subscription-wizard/report-selector/report-selector.component';
 import { ReportSubscriptionService } from './report-subscription/report-subscription.service';
@@ -101,4 +104,35 @@ const routes: Routes = [
   ],
   providers: [ReportSubscriptionService, SubscriptionsService],
 })
-export class SubscriptionsModule {}
+/* NS20262916 Move Report subscriptions from Profile to Menu Bar */
+export class SubscriptionsModule {  constructor(private readonly menuService: MenuService, logger: ClassloggerService) {
+    logger.info(this, '▶️ Subscriptions Module loaded');
+    this.setupMenu();
+  }
+
+  private setupMenu(): void {
+    this.menuService.addMenuFactories((preProps: string[], features: string[]) => {
+      const items: MenuItem[] = [];
+
+      items.push({
+        id: 'RPS_ReportSubscriptions',
+        navigationCommands: {
+          commands: ['reportsubscriptions']
+        },
+        title: '#LDS#Heading Report Subscriptions',
+        sorting: '55-10',
+      });
+
+
+      if (items.length === 0) {
+        return null;
+      }
+      return {
+        id: 'ROOT_Reports',
+        title: '#LDS#Menu Entry Reports',
+        sorting: '55',
+        items,
+      };
+    });
+  }
+}

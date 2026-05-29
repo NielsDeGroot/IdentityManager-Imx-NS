@@ -45,7 +45,8 @@ export class InitService {
 
   public onInit(routes: Route[]): void {
     this.addRoutes(routes);
-    this.extService.register('profile', {
+    /*  NS20262916 Move Report subscriptions from Profile to Menu Bar
+/*  this.extService.register('profile', {
       instance: SubscriptionsComponent,
       inputData: {
         id: 'subscriptions',
@@ -53,7 +54,7 @@ export class InitService {
         checkVisibility: async (_) => true,
       },
       SortOrder: 0,
-    } as TabItem);
+    } as TabItem); */
 
     this.extService.register('identityReportsManager', {
       instance: ReportButtonComponent,

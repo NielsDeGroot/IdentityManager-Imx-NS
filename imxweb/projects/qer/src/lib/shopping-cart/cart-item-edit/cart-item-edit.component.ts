@@ -137,7 +137,7 @@ export class CartItemEditComponent implements OnInit, OnDestroy {
     } else {
       defaultColumns.push(this.shoppingCartItem.ValidFrom.Column, this.shoppingCartItem.ValidUntil.Column);
     */
-    } else if (this.shoppingCartItem.TableName.value !== 'QERReuseUS'){
+    } else if (!['QERReuse', 'QERReuseUS'].includes(this.shoppingCartItem.TableName.value)) {
       defaultColumns.push(this.shoppingCartItem.ValidUntil.Column);
     }
 

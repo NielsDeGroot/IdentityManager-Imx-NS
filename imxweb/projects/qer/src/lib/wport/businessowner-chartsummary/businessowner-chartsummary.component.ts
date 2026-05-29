@@ -119,7 +119,7 @@ export class BusinessOwnerChartSummaryComponent implements OnInit {
           projectConfig: this.projectConfig,
           selectedIdentity,
           canEdit: true,
-          canAssignNewManager: this.canAssignNewManager && identity.GetEntity().GetColumn('ImportSource').GetValue() === 'DERDE'
+          canAssignNewManager: this.canAssignNewManager && ['DERDE', 'ITSHOP'].includes(identity.GetEntity().GetColumn('ImportSource').GetValue())
         },
       })
       .afterClosed()

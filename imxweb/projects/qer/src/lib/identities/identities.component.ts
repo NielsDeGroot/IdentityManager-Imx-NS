@@ -457,7 +457,7 @@ export class DataExplorerIdentitiesComponent implements OnInit, OnDestroy, SideN
           projectConfig: this.projectConfig,
           selectedIdentity: identity,
           canEdit: this.isPersonAdmin || this.isManagerForPersons,
-          canAssignNewManager: this.canAssignNewManager && identity.GetEntity().GetColumn('ImportSource').GetValue() === 'DERDE',
+          canAssignNewManager: this.canAssignNewManager && ['DERDE', 'ITSHOP'].includes(identity.GetEntity().GetColumn('ImportSource').GetValue()),
         },
         testId: 'identities-view-identity-sidesheet',
       })

@@ -30,13 +30,9 @@
         "AttestationConfig/EnableComplianceFrameworks": false,
         "AttestationConfig/PolicyObjectCountThreshold": 500,
         "AttestationConfig/AttestationHistoryView/AdditionalTableColumns": [
-          "StructureDisplay1",
-          "StructureDisplay2",
           "DisplayPersonHead",
           "ReasonHead"
         ],
-        "AttestationConfig/AttestationHistoryView/GroupBy": "UID_AttestationPolicy",
-        "AttestationConfig/AttestationApprovalView/GroupBy": "UID_AttestationPolicy",
         "AttestationConfig/AttestationHistoryView/OrderBy": "XDateInserted",
         "AttestationConfig/AttestationApprovalView/OrderBy": "ToSolveTill",
         "ServerConfig/PersonConfig/VI_MyData_WhitePages_ResultAttributes": [],

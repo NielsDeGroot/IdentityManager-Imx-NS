@@ -178,7 +178,8 @@ export class BusinessOwnerChartSummaryComponent implements OnInit {
   private async loadIndirectOrDirectReports(): Promise<void> {
     if (await this.qerPermissions.isPersonManager()) {
       this.allReportsCount = (await this.qerClient.typedClient.PortalPersonReports.Get({
-        PageSize: -1
+        PageSize: -1,
+        isinactive: '0' /* NS20260603 Don't show menu tile 'My Direct Reports(0)' if there are no active reports */
       })).totalCount;
     }
   }

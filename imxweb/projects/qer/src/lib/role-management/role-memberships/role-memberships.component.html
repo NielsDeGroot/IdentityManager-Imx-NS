@@ -1,12 +1,13 @@
 <div class="imx-tab-content">
   <div class="imx-mat-tab-content-body">
     <div eui-sidesheet-content class="imx-tab-content-body">
+      <!-- NS20260603 Put tab 'Secondary memberships' before 'Primary memberships' as it's used more often -->
       <mat-tab-group *ngIf="canHavePrimaryMemberships() || canBeDynamic || isDynamic; else secondaryOnly">
-        <mat-tab *ngIf="canHavePrimaryMemberships()" [label]="'#LDS#Primary memberships' | translate">
-          <imx-primary-memberships></imx-primary-memberships>
-        </mat-tab>
         <mat-tab [label]="'#LDS#Secondary memberships' | translate">
           <imx-secondary-memberships></imx-secondary-memberships>
+        </mat-tab>
+        <mat-tab *ngIf="canHavePrimaryMemberships()" [label]="'#LDS#Primary memberships' | translate">
+          <imx-primary-memberships></imx-primary-memberships>
         </mat-tab>
         <mat-tab *ngIf="canBeDynamic">
           <ng-template mat-tab-label>

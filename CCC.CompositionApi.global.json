@@ -23,8 +23,8 @@
         "ServerConfig/RoleMgmtConfig/Allow_Roles_Merge_Different_Organisation_Type": false,
         "ServerConfig/RoleMgmtConfig/Allow_Roles_Merge_Different_Role_Class": false,
         "AttestationConfig/AttestationApprovalView/AdditionalTableColumns": [
-          "StructureDisplay1",
-          "StructureDisplay2"
+          "DisplayPersonHead",
+          "ReasonHead"
         ],
         "AttestationConfig/EnableComplianceFrameworks": false,
         "AttestationConfig/PolicyObjectCountThreshold": 500,

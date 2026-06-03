@@ -15,8 +15,7 @@
         "ServerConfig/ITShopConfig/VI_ITShop_ForeignFuncCheck": false,
         "ServerConfig/ITShopConfig/VI_ITShop_ProductSelectionFromTemplate": false,
         "ServerConfig/ITShopConfig/ServiceCatalogViewConfiguration/AdditionalListColumns": [
-          "UID_OrgRuler",
-          null
+          "UID_OrgRuler"
         ],
         "ServerConfig/RoleMgmtConfig/Allow_Roles_Split_By_Business_Owner": false,
         "ServerConfig/RoleMgmtConfig/Allow_Roles_Split_Different_Organisation_Type": false,

@@ -1,1 +1,139 @@
-{"Scopes":[{"AppliesTo":"portal","Ignore":false,"Data":{"ServerConfig/DeviceConfig/VI_Hardware_Enabled":false,"ServerConfig/PasswordConfig/VI_MyData_MyPassword_Visibility":false,"ServerConfig/PersonConfig/ShowOrgChart":false,"ServerConfig/ITShopConfig/VI_ITShop_ApproverCanSetValidUntil":true,"ServerConfig/ITShopConfig/VI_ITShop_ApproverCanSetValidFrom":true,"ServerConfig/ITShopConfig/VI_ITShop_WantSeeQueryToPerson":false,"ServerConfig/VI_ITShop_Filter_PersonOrderFor":"UID_Person IN (\n\tSELECT UID_Person\n\tFROM QER_VEditEmployee\n\tWHERE UID_PersonHead = '%useruid%'\n\t)\nOR EXISTS (\n\tSELECT 1\n\tFROM PersonInAErole\n\tWHERE UID_AERole IN (\n\t\t\t'CCC-AEROLE-REQUESTADMIN'\n\t\t\t,'QER-AEROLE-PERSONADMIN-ADMIN'\n\t\t\t)\n\t\tAND UID_Person = '%useruid%'\n\t)","ServerConfig/ITShopConfig/VI_ITShop_ApproverReasonMandatoryOnDeny":true,"ServerConfig/ITShopConfig/VI_ITShop_ForeignFuncCheck":false,"ServerConfig/ITShopConfig/VI_ITShop_ProductSelectionFromTemplate":false,"ServerConfig/ITShopConfig/ServiceCatalogViewConfiguration/AdditionalListColumns":["UID_OrgRuler",null],"ServerConfig/RoleMgmtConfig/Allow_Roles_Split_By_Business_Owner":false,"ServerConfig/RoleMgmtConfig/Allow_Roles_Split_Different_Organisation_Type":false,"ServerConfig/RoleMgmtConfig/Allow_Roles_Merge_By_Business_Owner":false,"ServerConfig/RoleMgmtConfig/Allow_Roles_Merge_Different_Organisation_Type":false,"ServerConfig/RoleMgmtConfig/Allow_Roles_Merge_Different_Role_Class":false,"AttestationConfig/AttestationApprovalView/AdditionalTableColumns":["StructureDisplay1","StructureDisplay2"],"AttestationConfig/EnableComplianceFrameworks":false,"AttestationConfig/PolicyObjectCountThreshold":500,"AttestationConfig/AttestationHistoryView/AdditionalTableColumns":["StructureDisplay1","StructureDisplay2","DisplayPersonHead","ReasonHead"],"AttestationConfig/AttestationHistoryView/GroupBy":"UID_AttestationPolicy","AttestationConfig/AttestationApprovalView/GroupBy":"UID_AttestationPolicy","AttestationConfig/AttestationHistoryView/OrderBy":"XDateInserted","AttestationConfig/AttestationApprovalView/OrderBy":"ToSolveTill","ServerConfig/PersonConfig/VI_MyData_WhitePages_ResultAttributes":[],"ServerConfig/PersonConfig/VI_MyData_WhitePages_DetailAttributes":[],"ServerConfig/OwnershipConfig/EditableFields/AADUser":[],"ServerConfig/OwnershipConfig/EditableFields/ADSAccount":[],"ServerConfig/OwnershipConfig/EditableFields/ADSContact":[],"ServerConfig/OwnershipConfig/EditableFields/CSMUser":[],"ServerConfig/OwnershipConfig/EditableFields/PAGUser":[],"ServerConfig/OwnershipConfig/EditableFields/SAPUser":[],"ServerConfig/OwnershipConfig/EditableFields/SAPBWUser":[],"ServerConfig/OwnershipConfig/EditableFields/UNSAccountB":[],"ServerConfig/OwnershipConfig/EditableFields/AADDirectoryRole":[],"ServerConfig/OwnershipConfig/EditableFields/AADGroup":[],"ServerConfig/OwnershipConfig/EditableFields/AADScopedRLAsgn":[],"ServerConfig/OwnershipConfig/EditableFields/AADScopedRLElgb":[],"ServerConfig/OwnershipConfig/EditableFields/AADSubSku":[],"ServerConfig/OwnershipConfig/EditableFields/ADSGroup":[],"ServerConfig/OwnershipConfig/EditableFields/CSMGroup":[],"ServerConfig/OwnershipConfig/EditableFields/CSMGroup1":[],"ServerConfig/OwnershipConfig/EditableFields/CSMGroup2":[],"ServerConfig/OwnershipConfig/EditableFields/CSMGroup3":[],"ServerConfig/OwnershipConfig/EditableFields/PAGUsrGroup":[],"ServerConfig/OwnershipConfig/EditableFields/SAPGrp":[],"ServerConfig/OwnershipConfig/EditableFields/SAPProfile":[],"ServerConfig/OwnershipConfig/EditableFields/SAPRole":[],"ServerConfig/OwnershipConfig/EditableFields/SAPBWP":[],"ServerConfig/OwnershipConfig/EditableFields/SAPHRP":[],"ServerConfig/OwnershipConfig/EditableFields/UNSGroupB":[],"ServerConfig/OwnershipConfig/EditableFields/UNSGroupB1":[],"ServerConfig/OwnershipConfig/EditableFields/UNSGroupB2":[],"ServerConfig/OwnershipConfig/EditableFields/UNSGroupB3":[],"ServerConfig/OwnershipConfig/PrimaryFields/Department":[],"ServerConfig/OwnershipConfig/PrimaryFields/Locality":[],"ServerConfig/OwnershipConfig/PrimaryFields/AERole":[],"ServerConfig/OwnershipConfig/PrimaryFields/ProfitCenter":[],"ServerConfig/OwnershipConfig/EditableFields/Department":[],"ServerConfig/OwnershipConfig/EditableFields/Locality":[],"ServerConfig/OwnershipConfig/EditableFields/ProfitCenter":[],"ServerConfig/OwnershipConfig/EditableFields/QERResource":[],"ServerConfig/OwnershipConfig/EditableFields/QERReuse":[],"ServerConfig/OwnershipConfig/EditableFields/QERReuseUS":[],"ServerConfig/OwnershipConfig/EditableFields/QERAssign":[],"ServerConfig/OwnershipConfig/EditableFields/AccProductGroup":[],"ServerConfig/OwnershipConfig/EditableFields/AERole":[],"ServerConfig/DisableHyperViewNavigation":true,"ServerConfig/ITShopConfig/AccProductProperties":["Description","UID_AccProductGroup"],"ServerConfig/ITShopConfig/ApproverViewConfiguration/AdditionalTableColumns":["UID_PersonOrdered"],"ServerConfig/ITShopConfig/HistoryViewConfiguration/AdditionalTableColumns":["DisplayPersonHead","ReasonHead"],"TSB/BusinessOwnerConfig/TSB_BusinessOwnership_Filter_UNSGroup_Suggestion":"1=0","TSB/BusinessOwnerConfig/TSB_BusinessOwnership_Filter_UNSGroup_Suggestion_2":"1=0","ServerConfig/PersonConfig/VI_Employee_MasterData_OrganizationalAttributes":["UID_Department","EntryDate","ExitDate","IsInActive","IsTemporaryDeactivated","UID_PersonHead","ImportSource"],"ServerConfig/PersonConfig/VI_Employee_MasterData_Attributes":["FirstName","LastName","MiddleName","PreferredName","Initials","BirthDate","PersonnelNumber","CentralAccount","DefaultEmailAddress","ContactEmail","CustomProperty05"],"ServerConfig/AuthenticationConfig/ExcludedAuthentifiers":["DialogUser","RoleBasedPerson","RoleBasedGeneric"],"PropertyConfig/MethodConfiguration/admin_person/WhereClause":"IdentityType = N'Primary'\nAND (\n\tEXISTS (\n\t\tSELECT 1\n\t\tFROM PersonInAErole\n\t\tWHERE UID_AERole = 'QER-AEROLE-PERSONADMIN-ADMIN'\n\t\tAND UID_Person = '%useruid%'\n\t\t)\n\tOR UID_Person IN (\n\t\tSELECT UID_Person\n\t\tFROM Person\n\t\tWHERE ImportSource = N'DERDE'\n\t\tAND UID_Department IN (\n\t\t\tSELECT UID_Department\n\t\t\tFROM Department\n\t\t\tWHERE ImportSource = N'DERDE'\n\t\t\tAND UID_Department IN (\n\t\t\t\tSELECT UID_Department\n\t\t\t\tFROM AERole\n\t\t\t\tWHERE UID_Department IS NOT NULL\n\t\t\t\tAND UID_AERole IN (\n\t\t\t\t\tSELECT UID_AERole\n\t\t\t\t\tFROM PersonInAErole\n\t\t\t\t\tWHERE UID_Person = '%UserUID%'\n\t\t\t\t\t)\n\t\t\t\t)\n\t\t\t)\n\t\t)\n\t)","ServerConfig/VI_Employee_Person_Filter":"uid_person in (select uid_person from person where IdentityType = N'Primary' and UID_Person in (select uid_person from QER_VEditEmployee where uid_personhead = '%useruid%'))"}},{"AppliesTo":"imx","Ignore":false,"Data":{"ServerLevelConfig/DefaultHtmlApp":"qer-app-portal","ServerLevelConfig/XsrfProtectionDisabled":false}}],"AppliesTo":null,"Ignore":false,"Data":null}
+{
+  "Scopes": [
+    {
+      "AppliesTo": "portal",
+      "Ignore": false,
+      "Data": {
+        "ServerConfig/DeviceConfig/VI_Hardware_Enabled": false,
+        "ServerConfig/PasswordConfig/VI_MyData_MyPassword_Visibility": false,
+        "ServerConfig/PersonConfig/ShowOrgChart": false,
+        "ServerConfig/ITShopConfig/VI_ITShop_ApproverCanSetValidUntil": true,
+        "ServerConfig/ITShopConfig/VI_ITShop_ApproverCanSetValidFrom": true,
+        "ServerConfig/ITShopConfig/VI_ITShop_WantSeeQueryToPerson": false,
+        "ServerConfig/VI_ITShop_Filter_PersonOrderFor": "UID_Person IN (\n\tSELECT UID_Person\n\tFROM QER_VEditEmployee\n\tWHERE UID_PersonHead = '%useruid%'\n\t)\nOR EXISTS (\n\tSELECT 1\n\tFROM PersonInAErole\n\tWHERE UID_AERole IN (\n\t\t\t'CCC-AEROLE-REQUESTADMIN'\n\t\t\t,'QER-AEROLE-PERSONADMIN-ADMIN'\n\t\t\t)\n\t\tAND UID_Person = '%useruid%'\n\t)",
+        "ServerConfig/ITShopConfig/VI_ITShop_ApproverReasonMandatoryOnDeny": true,
+        "ServerConfig/ITShopConfig/VI_ITShop_ForeignFuncCheck": false,
+        "ServerConfig/ITShopConfig/VI_ITShop_ProductSelectionFromTemplate": false,
+        "ServerConfig/ITShopConfig/ServiceCatalogViewConfiguration/AdditionalListColumns": [
+          "UID_OrgRuler"
+        ],
+        "ServerConfig/RoleMgmtConfig/Allow_Roles_Split_By_Business_Owner": false,
+        "ServerConfig/RoleMgmtConfig/Allow_Roles_Split_Different_Organisation_Type": false,
+        "ServerConfig/RoleMgmtConfig/Allow_Roles_Merge_By_Business_Owner": false,
+        "ServerConfig/RoleMgmtConfig/Allow_Roles_Merge_Different_Organisation_Type": false,
+        "ServerConfig/RoleMgmtConfig/Allow_Roles_Merge_Different_Role_Class": false,
+        "AttestationConfig/AttestationApprovalView/AdditionalTableColumns": [
+          "DisplayPersonHead",
+          "ReasonHead"
+        ],
+        "AttestationConfig/EnableComplianceFrameworks": false,
+        "AttestationConfig/PolicyObjectCountThreshold": 500,
+        "AttestationConfig/AttestationHistoryView/AdditionalTableColumns": [
+          "DisplayPersonHead",
+          "ReasonHead"
+        ],
+        "AttestationConfig/AttestationHistoryView/OrderBy": "XDateInserted",
+        "AttestationConfig/AttestationApprovalView/OrderBy": "ToSolveTill",
+        "ServerConfig/PersonConfig/VI_MyData_WhitePages_ResultAttributes": [],
+        "ServerConfig/PersonConfig/VI_MyData_WhitePages_DetailAttributes": [],
+        "ServerConfig/OwnershipConfig/EditableFields/AADUser": [],
+        "ServerConfig/OwnershipConfig/EditableFields/ADSAccount": [],
+        "ServerConfig/OwnershipConfig/EditableFields/ADSContact": [],
+        "ServerConfig/OwnershipConfig/EditableFields/CSMUser": [],
+        "ServerConfig/OwnershipConfig/EditableFields/PAGUser": [],
+        "ServerConfig/OwnershipConfig/EditableFields/SAPUser": [],
+        "ServerConfig/OwnershipConfig/EditableFields/SAPBWUser": [],
+        "ServerConfig/OwnershipConfig/EditableFields/UNSAccountB": [],
+        "ServerConfig/OwnershipConfig/EditableFields/AADDirectoryRole": [],
+        "ServerConfig/OwnershipConfig/EditableFields/AADGroup": [],
+        "ServerConfig/OwnershipConfig/EditableFields/AADScopedRLAsgn": [],
+        "ServerConfig/OwnershipConfig/EditableFields/AADScopedRLElgb": [],
+        "ServerConfig/OwnershipConfig/EditableFields/AADSubSku": [],
+        "ServerConfig/OwnershipConfig/EditableFields/ADSGroup": [],
+        "ServerConfig/OwnershipConfig/EditableFields/CSMGroup": [],
+        "ServerConfig/OwnershipConfig/EditableFields/CSMGroup1": [],
+        "ServerConfig/OwnershipConfig/EditableFields/CSMGroup2": [],
+        "ServerConfig/OwnershipConfig/EditableFields/CSMGroup3": [],
+        "ServerConfig/OwnershipConfig/EditableFields/PAGUsrGroup": [],
+        "ServerConfig/OwnershipConfig/EditableFields/SAPGrp": [],
+        "ServerConfig/OwnershipConfig/EditableFields/SAPProfile": [],
+        "ServerConfig/OwnershipConfig/EditableFields/SAPRole": [],
+        "ServerConfig/OwnershipConfig/EditableFields/SAPBWP": [],
+        "ServerConfig/OwnershipConfig/EditableFields/SAPHRP": [],
+        "ServerConfig/OwnershipConfig/EditableFields/UNSGroupB": [],
+        "ServerConfig/OwnershipConfig/EditableFields/UNSGroupB1": [],
+        "ServerConfig/OwnershipConfig/EditableFields/UNSGroupB2": [],
+        "ServerConfig/OwnershipConfig/EditableFields/UNSGroupB3": [],
+        "ServerConfig/OwnershipConfig/PrimaryFields/Department": [],
+        "ServerConfig/OwnershipConfig/PrimaryFields/Locality": [],
+        "ServerConfig/OwnershipConfig/PrimaryFields/AERole": [],
+        "ServerConfig/OwnershipConfig/PrimaryFields/ProfitCenter": [],
+        "ServerConfig/OwnershipConfig/EditableFields/Department": [],
+        "ServerConfig/OwnershipConfig/EditableFields/Locality": [],
+        "ServerConfig/OwnershipConfig/EditableFields/ProfitCenter": [],
+        "ServerConfig/OwnershipConfig/EditableFields/QERResource": [],
+        "ServerConfig/OwnershipConfig/EditableFields/QERReuse": [],
+        "ServerConfig/OwnershipConfig/EditableFields/QERReuseUS": [],
+        "ServerConfig/OwnershipConfig/EditableFields/QERAssign": [],
+        "ServerConfig/OwnershipConfig/EditableFields/AccProductGroup": [],
+        "ServerConfig/OwnershipConfig/EditableFields/AERole": [],
+        "ServerConfig/DisableHyperViewNavigation": true,
+        "ServerConfig/ITShopConfig/AccProductProperties": [
+          "Description",
+          "UID_AccProductGroup"
+        ],
+        "ServerConfig/ITShopConfig/ApproverViewConfiguration/AdditionalTableColumns": [
+          "UID_PersonOrdered"
+        ],
+        "ServerConfig/ITShopConfig/HistoryViewConfiguration/AdditionalTableColumns": [
+          "DisplayPersonHead",
+          "ReasonHead"
+        ],
+        "TSB/BusinessOwnerConfig/TSB_BusinessOwnership_Filter_UNSGroup_Suggestion": "1=0",
+        "TSB/BusinessOwnerConfig/TSB_BusinessOwnership_Filter_UNSGroup_Suggestion_2": "1=0",
+        "ServerConfig/PersonConfig/VI_Employee_MasterData_OrganizationalAttributes": [
+          "UID_Department",
+          "EntryDate",
+          "ExitDate",
+          "IsInActive",
+          "IsTemporaryDeactivated",
+          "UID_PersonHead",
+          "ImportSource"
+        ],
+        "ServerConfig/PersonConfig/VI_Employee_MasterData_Attributes": [
+          "FirstName",
+          "LastName",
+          "MiddleName",
+          "PreferredName",
+          "Initials",
+          "BirthDate",
+          "PersonnelNumber",
+          "CentralAccount",
+          "DefaultEmailAddress",
+          "ContactEmail",
+          "CustomProperty05"
+        ],
+        "ServerConfig/AuthenticationConfig/ExcludedAuthentifiers": [
+          "DialogUser",
+          "RoleBasedPerson",
+          "RoleBasedGeneric"
+        ],
+        "PropertyConfig/MethodConfiguration/admin_person/WhereClause": "IdentityType = N'Primary'\nAND (\n\tEXISTS (\n\t\tSELECT 1\n\t\tFROM PersonInAErole\n\t\tWHERE UID_AERole = 'QER-AEROLE-PERSONADMIN-ADMIN'\n\t\tAND UID_Person = '%useruid%'\n\t\t)\n\tOR UID_Person IN (\n\t\tSELECT UID_Person\n\t\tFROM Person\n\t\tWHERE ImportSource = N'DERDE'\n\t\tAND UID_Department IN (\n\t\t\tSELECT UID_Department\n\t\t\tFROM Department\n\t\t\tWHERE ImportSource = N'DERDE'\n\t\t\tAND UID_Department IN (\n\t\t\t\tSELECT UID_Department\n\t\t\t\tFROM AERole\n\t\t\t\tWHERE UID_Department IS NOT NULL\n\t\t\t\tAND UID_AERole IN (\n\t\t\t\t\tSELECT UID_AERole\n\t\t\t\t\tFROM PersonInAErole\n\t\t\t\t\tWHERE UID_Person = '%UserUID%'\n\t\t\t\t\t)\n\t\t\t\t)\n\t\t\t)\n\t\t)\n\t)",
+        "ServerConfig/VI_Employee_Person_Filter": "uid_person IN (\n\tSELECT uid_person\n\tFROM person\n\tWHERE IdentityType = N'Primary'\n\t\tAND UID_Person IN (\n\t\t\tSELECT uid_person\n\t\t\tFROM QER_VEditEmployee\n\t\t\tWHERE uid_personhead = '%useruid%'\n\t\t\t)\n\t)",
+        "RMS/VI_Roles_Responsibility_ESet": "uid_personresponsible = '%useruid%' \nOR\nCCC_UID_PersonResponsibleNext = '%useruid%' \nOr\nUID_Eset IN (\n\t\tselect e.UID_Eset\n\t\tfrom PersonInAERole pinr\n\t\tLEFT JOIN AERoleCollection col ON col.UID_AERole = pinr.UID_AERole\n\t\tLEFT JOIN AERole r ON r.UID_AERole = col.UID_ParentAERole\n\t\tLEFT JOIN Eset e ON (\n\t\t\t\tr.UID_AERole = e.CCC_UID_AERoleManager\n\t\t\t\tOr (\n\t\t\t\t\tr.UID_AERole = e.CCC_UID_RulerContainer\n\t\t\t\t\tAnd e.CCC_IsManagedByRulerContainer = 1\n\t\t\t\t\t)\n\t\t\t\tOr (\n\t\t\t\t\tr.UID_AERole = e.CCC_UID_RulerContainerIT\n\t\t\t\t\tAnd e.CCC_ManagedByRulerContainerIT = 1\n\t\t\t\t\t)\n\t\t\t\t)\n\t\tWhere e.UID_Eset Is Not NULL\n\t\t\tAnd pinr.UID_Person = '%useruid%'\n\t\t)",
+        "RMB/VI_Roles_Responsibility_Org": "uid_org IN (\n\tSELECT orgc.uid_org\n\tFROM orgcollection orgc\n\tJOIN org o1 ON o1.uid_org = orgc.uid_org\n\tJOIN helperheadorg hho ON hho.uid_org = orgc.uid_parentorg\n\t\tAND hho.uid_personhead = '%useruid%'\n\tJOIN orgroot orgr ON orgr.uid_orgroot = o1.uid_orgroot\n\t\tAND orgr.istopdown = 1\n\t\n\tUNION ALL\n\t\n\tSELECT orgc.uid_parentorg\n\tFROM orgcollection orgc\n\tJOIN org o1 ON o1.uid_org = orgc.uid_org\n\tJOIN helperheadorg hho ON hho.uid_org = orgc.uid_org\n\t\tAND hho.uid_personhead = '%useruid%'\n\tJOIN orgroot orgr ON orgr.uid_orgroot = o1.uid_orgroot\n\t\tAND orgr.istopdown = 0\n\t\n\tUNION ALL\n\t\t\n\tSELECT oc.UID_ParentOrg\n\tFROM PersonInAERole pinr\n\tLEFT JOIN AERoleCollection col ON col.UID_AERole = pinr.UID_AERole\n\tLEFT JOIN AERole r ON r.UID_AERole = col.UID_ParentAERole\n\tLEFT JOIN Org o ON (\n\t\t\tr.UID_AERole = o.UID_RulerContainer\n\t\t\tAND o.CCC_IsManagedByRulerContainer = 1\n\t\t\t)\n\t\tOR (\n\t\t\tr.UID_AERole = o.UID_RulerContainerIT\n\t\t\tAND o.CCC_ManagedByRulerContainerIT = 1\n\t\t\t)\n\tLEFT JOIN OrgCollection oc ON o.UID_Org = oc.UID_Org\n\tWHERE o.UID_Org IS NOT NULL\n\t\tAND pinr.UID_Person = '%useruid%'\n)"
+      }
+    },
+    {
+      "AppliesTo": "imx",
+      "Ignore": false,
+      "Data": {
+        "ServerLevelConfig/DefaultHtmlApp": "qer-app-portal",
+        "ServerLevelConfig/XsrfProtectionDisabled": false
+      }
+    }
+  ],
+  "AppliesTo": null,
+  "Ignore": false,
+  "Data": null
+}

@@ -315,6 +315,12 @@ export class RequestTableComponent implements OnInit, OnDestroy {
         exportMethod = this.requestHistoryService.exportRequests(this.navigationState);
         exportMethod.initialColumns = this.displayedColumns.map((col) => col.ColumnName);
       }
+      // NS20260610 Set default filters on request history overview: Scope = Requests submitted by you for yourself, Status = Active
+      const person = this.filterOptions.findIndex((elem) => elem.Name === 'person');
+      this.filterOptions[person].InitialValue = '1';
+      const status = this.filterOptions.findIndex((elem) => elem.Name === 'status');
+      this.filterOptions[status].InitialValue = '1';
+      
       if (data) {
         const dstSettings: DataSourceToolbarSettings = {
           dataSource: {

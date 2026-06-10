@@ -45,6 +45,7 @@ import { DataManagementService } from '../data-management.service';
 import { RoleService } from '../role.service';
 import { IdentitiesService } from './identities.service';
 import { NotRequestableMembershipsComponent } from './not-requestable-memberships/not-requestable-memberships.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'imx-memberships-choose-identities',
@@ -75,7 +76,8 @@ export class MembershipsChooseIdentitiesComponent implements OnInit {
     private readonly userService: UserModelService,
     private readonly busyService: EuiLoadingService,
     private readonly authentication: AuthenticationService,
-    private readonly dialogService: MatDialog
+    private readonly dialogService: MatDialog,
+    private readonly router: Router
   ) {
     this.entitySchema = this.identityService.getSchema();
     this.displayColumns = [this.entitySchema.Columns[DisplayColumns.DISPLAY_PROPERTYNAME]];
@@ -118,7 +120,7 @@ export class MembershipsChooseIdentitiesComponent implements OnInit {
       return;
     }
 
-    const entity = this.dataManagementService.entityInteractive.GetEntity();
+   const entity = this.dataManagementService.entityInteractive.GetEntity();
     this.busyService.show();
     try {
       const notRequestableMemberships = await this.identityService.addMemberships(
@@ -139,6 +141,7 @@ export class MembershipsChooseIdentitiesComponent implements OnInit {
         await dialogRef.beforeClosed().toPromise();
       }
 
+      let succes = false;
       if (notRequestableMemberships.length < this.selection.length) {
         // there is at least one membership added
         await this.userService.reloadPendingItems();
@@ -146,8 +149,13 @@ export class MembershipsChooseIdentitiesComponent implements OnInit {
           key: '#LDS#The membership for "{0}" has been successfully added to the shopping cart.',
           parameters: [entity.GetDisplay()],
         });
+        succes = true;
       }
-      this.sidesheetRef.close();
+      this.sidesheetRef.close(succes);
+       // NS20260610 redirect to shopping cart after adding membership(s).
+      if (succes) {
+        this.router.navigate(['shoppingcart']);
+      }
     } finally {
       this.busyService.hide();
     }

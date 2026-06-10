@@ -181,7 +181,7 @@ export class SecondaryMembershipsComponent implements OnInit {
       width: '800px',
       disableClose: false,
       testId: 'role-select-identities',
-    });
+    }).afterClosed().subscribe(async (result) => {if (result) {this.sidesheet.close()}});
   }
 
   public async onSelectionChanged(items: TypedEntity[]): Promise<any> {

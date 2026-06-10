@@ -72,7 +72,7 @@ export class AboutComponent implements OnInit {
     this.product['Copyright'] = Globals.QBM_Copyright;
     // NS20260424 Update HTML versions
     this.product['HtmlVersion'] = 'HTML Applications: April 17, 2026';
-    this.product['HtmlCustomVersion'] = 'HTML Customizations: June 3, 2026';
+    this.product['HtmlCustomVersion'] = 'HTML Customizations: June 10, 2026';
 
     this.product['ThirdPartyLicencesUrl'] = 'https://www.oneidentity.com/legal/third-party-licenses.aspx';
     this.product['OpenSourceUrl'] = 'https://opensource.quest.com';

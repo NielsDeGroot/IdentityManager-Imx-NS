@@ -6,7 +6,7 @@
     <imx-data-table [dst]="dst" [detailViewVisible]="false" [selectable]="true" mode="manual"
         (selectionChanged)="onSelectionChanged($event)" data-imx-identifier="cart-items-data-table">
         <imx-data-table-column [entityColumn]="entitySchema?.Columns[DisplayColumns.DISPLAY_PROPERTYNAME]"
-            columnLabel="{{'#LDS#Product' | translate}}" data-imx-identifier="cart-items-data-table-column-default">
+            columnLabel="{{'#LDS#Multi-edit products' | translate}}" data-imx-identifier="cart-items-data-table-column-default">
             <ng-template let-cartItem>
                 <div class="imx-display-column">
                     <div class="imx-placeholder" *ngIf="cartItem.UID_ShoppingCartItemParent.value"></div>

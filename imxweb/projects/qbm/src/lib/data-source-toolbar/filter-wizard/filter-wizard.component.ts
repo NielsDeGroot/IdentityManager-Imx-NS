@@ -156,7 +156,7 @@ export class FilterWizardComponent implements OnDestroy {
   }
 
   public get showSqlWizard(): boolean {
-    return this.sqlWizardSvc.implemented && !!this.data.settings?.entitySchema?.TypeName;
+    return this.sqlWizardSvc.implemented;
   }
 
   private async close(): Promise<void> {

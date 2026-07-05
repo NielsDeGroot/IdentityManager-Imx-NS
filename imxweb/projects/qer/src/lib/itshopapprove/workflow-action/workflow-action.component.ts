@@ -51,7 +51,7 @@ import { WorkflowActionEdit } from './workflow-action-edit.interface';
 @Component({
   selector: 'imx-workflow-action',
   templateUrl: './workflow-action.component.html',
-  styleUrls: ['./workflow-action.component.scss']
+  styleUrls: ['./workflow-action.component.scss'],
 })
 export class WorkflowActionComponent {
   /**
@@ -66,11 +66,14 @@ export class WorkflowActionComponent {
    */
   constructor(
     @Inject(EUI_SIDESHEET_DATA) public readonly data: WorkflowActionEdit,
-    public readonly sideSheetRef: EuiSidesheetRef
+    public readonly sideSheetRef: EuiSidesheetRef,
   ) {
-
     if (this.data.customValidation) {
-      this.formGroup.setValidators(_ => this.data.customValidation.validate() ? null : ({ required: true }));
+      this.formGroup.setValidators((_) => (this.data.customValidation.validate() ? null : { required: true }));
     }
+  }
+
+  onClose(): void {
+    this.sideSheetRef.close(this.formGroup);
   }
 }

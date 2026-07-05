@@ -96,12 +96,21 @@ export class AppComponent implements OnInit, OnDestroy {
           // Needs to close here when running in containers (auth skipped)
           splash.close();
 
-          const config: QerProjectConfig & ProjectConfig = await projectConfig.getConfig();
-          const features = (await userModelService.getFeatures()).Features;
-          const systemInfo = await systemInfoService.get();
-          const groups = (await userModelService.getGroups()).map((group) => group.Name || '');
-          this.profileSettings = await this.qerClient.v2Client.portal_profile_get();
-          const isUseProfileLangChecked = this.profileSettings.UseProfileLanguage ?? false;
+          // The following calls are independent of each other and can be issued in parallel.
+          // This is important on installations where individual REST calls may be slow
+          // (e.g. read-only secondary SQL databases): the post-login wall-clock time
+          // is bounded by the slowest single call instead of the sum.
+          const [config, featuresResp, systemInfo, groupsResp, profileSettings] = await Promise.all([
+            projectConfig.getConfig() as Promise<QerProjectConfig & ProjectConfig>,
+            userModelService.getFeatures(),
+            systemInfoService.get(),
+            userModelService.getGroups(),
+            this.qerClient.v2Client.portal_profile_get(),
+          ]);
+          const features = featuresResp.Features;
+          const groups = groupsResp.map((group) => group.Name || '');
+          this.profileSettings = profileSettings;
+          const isUseProfileLangChecked = this.profileSettings.UseProfileLanguage ?? config.PersonConfig?.UseProfileCulture ?? false;
           // Set session culture if isUseProfileLangChecked is true, set browser culture otherwise
           if (isUseProfileLangChecked) {
             await this.translationProvider.init(sessionState.culture, sessionState.cultureFormat);

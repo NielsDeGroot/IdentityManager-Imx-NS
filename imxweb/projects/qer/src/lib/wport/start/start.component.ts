@@ -57,7 +57,7 @@ export class StartComponent implements OnInit {
     private readonly detectRef: ChangeDetectorRef,
     private readonly projectConfigurationService: ProjectConfigurationService,
     private readonly splash: SplashService,
-  ) {}
+  ) { }
 
   public async ngOnInit(): Promise<void> {
     this.dashboardService.busyStateChanged.subscribe((busy) => {
@@ -66,11 +66,22 @@ export class StartComponent implements OnInit {
     });
     const busy = this.dashboardService.beginBusy();
     try {
-      this.userConfig = await this.userModelSvc.getUserConfig();
-      this.pendingItems = await this.userModelSvc.getPendingItems();
-      this.projectConfig = await this.projectConfigurationService.getConfig();
-      this.systemInfo = await this.systemInfoService.get();
-      this.userUid = (await this.sessionService.getSessionState()).UserUid;
+      // The following calls are independent of each other and can be issued in parallel.
+      // This is important on installations where individual REST calls may be slow
+      // (e.g. read-only secondary SQL databases): with Promise.all, the splash-screen
+      // wall-clock time is bounded by the slowest single call instead of the sum.
+      const [userConfig, pendingItems, projectConfig, systemInfo, sessionState] = await Promise.all([
+        this.userModelSvc.getUserConfig(),
+        this.userModelSvc.getPendingItems(),
+        this.projectConfigurationService.getConfig(),
+        this.systemInfoService.get(),
+        this.sessionService.getSessionState(),
+      ]);
+      this.userConfig = userConfig;
+      this.pendingItems = pendingItems;
+      this.projectConfig = projectConfig;
+      this.systemInfo = systemInfo;
+      this.userUid = sessionState.UserUid;
     } finally {
       this.splash.close();
       busy.endBusy();

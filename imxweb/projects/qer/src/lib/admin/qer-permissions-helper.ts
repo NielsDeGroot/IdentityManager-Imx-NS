@@ -76,6 +76,3 @@ export function isAuditor(groups: string[]): boolean {
 export function isTsbNameSpaceAdminBase(groups: string[]): boolean {
   return groups.find((item) => item.toUpperCase() === 'TSB_4_NAMESPACEADMIN_BASE') != null;
 }
-export function canAssignNewManager(features: string[]): boolean {
-  return features.find((item) => item === 'CCC_Portal_UI_AssignNewManager') != null;
-}

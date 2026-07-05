@@ -159,7 +159,6 @@ export class DataExplorerIdentitiesComponent implements OnInit, OnDestroy, SideN
         (this.currentUser = session.UserUid), (this.isManagerForPersons = await qerPermissionService.isPersonManager());
         this.isPersonAdmin = await qerPermissionService.isPersonAdmin();
         this.isAuditor = await qerPermissionService.isAuditor();
-        this.canAssignNewManager = await qerPermissionService.canAssignNewManager();
       }
     });
   }
@@ -457,7 +456,10 @@ export class DataExplorerIdentitiesComponent implements OnInit, OnDestroy, SideN
           projectConfig: this.projectConfig,
           selectedIdentity: identity,
           canEdit: this.isPersonAdmin || this.isManagerForPersons,
-          canAssignNewManager: this.canAssignNewManager && ['DERDE', 'ITSHOP'].includes(identity.GetEntity().GetColumn('ImportSource').GetValue()),
+          /* NS20260703 Show button 'Assign New manager' when you have 'Person.ExitDate' edit permissions on the Identity.
+             This workaround is implemented because the API server always forcibly sets the Person.UID_Personhead to read-only.
+          */
+          canAssignNewManager: identity.GetEntity().GetColumn('ExitDate').GetMetadata().CanEdit(),
         },
         testId: 'identities-view-identity-sidesheet',
       })

@@ -76,7 +76,6 @@ export class BusinessOwnerChartSummaryComponent implements OnInit {
       this.ownerships = userConfig.Ownerships;
 
       this.projectConfig = await this.configService.getConfig();
-      this.canAssignNewManager = await this.qerPermissions.canAssignNewManager();
       await this.getData();
     } finally {
       busy.endBusy();
@@ -119,7 +118,10 @@ export class BusinessOwnerChartSummaryComponent implements OnInit {
           projectConfig: this.projectConfig,
           selectedIdentity,
           canEdit: true,
-          canAssignNewManager: this.canAssignNewManager && ['DERDE', 'ITSHOP'].includes(identity.GetEntity().GetColumn('ImportSource').GetValue())
+          /* NS20260703 Show button 'Assign New manager' when you have 'Person.ExitDate' edit permissions on the Identity.
+             This workaround is implemented because the API server always forcibly sets the Person.UID_Personhead to read-only.
+          */
+          canAssignNewManager: identity.GetEntity().GetColumn('ExitDate').GetMetadata().CanEdit(),
         },
       })
       .afterClosed()

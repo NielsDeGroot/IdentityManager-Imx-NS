@@ -58,13 +58,13 @@
           <eui-alert *ngIf="isIdentityMarkedForDelete" class="imx-helper-alert" type="info" [condensed]="true" [colored]="true" [dismissable]="true">
             {{ '#LDS#This identity will be deleted.' | translate }}
           </eui-alert>
-
           <div>
             <eui-badge color="red" class="imx-security-badge" *ngIf="data.selectedIdentity.IsSecurityIncident.value === true">
               {{ '#LDS#Security risk' | translate }}
             </eui-badge>
           </div>
           <form [formGroup]="detailsFormGroup">
+            <!-- NS20260703 Disable set Identity active/inactive and set Identity poses a security risk
             <div class="imx-toggle-container">
               <mat-slide-toggle
                 *ngIf="data.isAdmin"
@@ -89,6 +89,7 @@
                 <span [translate]="incidentToggle.checked ? '#LDS#Identity poses a security risk' : '#LDS#Identity does not pose a security risk'"></span>
               </mat-slide-toggle>
             </div>
+            -->
             <mat-accordion>
               <mat-expansion-panel [expanded]="true" *ngIf="cdrListPersonal.length > 0">
                 <mat-expansion-panel-header>
@@ -175,6 +176,7 @@
   </ng-container>
 </mat-tab-group>
 <div eui-sidesheet-actions>
+  <!-- NS20260703 Disable Delete Identity button
   <button
     class="justify-start"
     mat-stroked-button
@@ -186,6 +188,7 @@
     <eui-icon icon="userremove"></eui-icon>
     <span translate>#LDS#Delete</span>
   </button>
+  -->
   <button mat-stroked-button data-imx-identifier="identity-sidesheet-actions" title="{{ '#LDS#Actions' | translate }}" [matMenuTriggerFor]="actionsMenu">
     <eui-icon icon="ellipsisvertical"></eui-icon>
   </button>

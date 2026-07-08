@@ -58,8 +58,9 @@ export class EditImageComponent implements CdrEditor, OnDestroy {
   /**
    * Gets a small hint, if the file format is not supported.
    */
+  /* NS20260708 Added support for JPEG */
   public get fileFormatHint(): string {
-    return this.fileFormatError ? '#LDS#Please select an image in PNG format.' : undefined;
+    return this.fileFormatError ? '#LDS#Please select an image in PNG or JPEG format.' : undefined;
   }
 
   /**
@@ -186,8 +187,24 @@ export class EditImageComponent implements CdrEditor, OnDestroy {
    * @param files A list of files to emit as *.png.
    */
   // TODO: Check Upgrade
-  public emitFiles(files: FileList): void {
-    this.fileSelector.emitFiles(files, 'image/png');
+  /* NS20260708 Added support for JPEG */
+  public emitFiles(files: EventTarget | null): void {
+    const fileList = (files as any).files as FileList;
+
+    if (!fileList || fileList.length === 0) {
+      return;
+    }
+
+    const file = fileList[0];
+    const allowedTypes = ['image/png', 'image/jpeg'];
+
+    if (!allowedTypes.includes(file.type)) {
+      this.fileFormatError = true;
+      return;
+    }
+
+    this.fileFormatError = false;
+    this.fileSelector.emitFiles(fileList, file.type);
   }
 
   /**

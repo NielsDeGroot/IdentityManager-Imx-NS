@@ -32,14 +32,23 @@ import { IWriteValue } from 'imx-qbm-dbts';
   providedIn: 'root'
 })
 export class Base64ImageService {
-  private readonly base64DataUrl = 'data:image/png;base64,';
+ 
+  /* NS20260708 Add support for both PNG and JPEG base64 data URL prefixes */
+  private readonly pngBase64DataUrl = 'data:image/png;base64,';
+  private readonly jpegBase64DataUrl = 'data:image/jpeg;base64,';
 
   /**
    * Returns the image data without the base64-dataurl-prefix
    * @param url the corresponding url
    */
   public getImageData(url: string): string {
-    return url ? url.replace(this.base64DataUrl, '') : '';
+    if (!url) {
+      return '';
+    }
+
+    return url
+      .replace(this.pngBase64DataUrl, '')
+      .replace(this.jpegBase64DataUrl, '');
   }
 
   /**
@@ -57,10 +66,22 @@ export class Base64ImageService {
    * @returns the base64-imageUrl of the image
    */
   public addBase64Prefix(imageValue: string): SafeUrl {
-    if (imageValue && imageValue.length > 0) {
-      return (!imageValue.startsWith(this.base64DataUrl) ? this.base64DataUrl : '') + imageValue;
+    if (!imageValue || imageValue.length === 0) { 
+      return ''; 
     }
 
-    return '';
+    if (imageValue.startsWith('data:image/')) {
+      return imageValue;
+    }
+
+    return `${this.getBase64DataUrl(imageValue)}${imageValue}`;
+  }
+
+  private getBase64DataUrl(imageValue: string): string {
+    if (imageValue.startsWith('/9j/')) {
+      return this.jpegBase64DataUrl;
+    }
+
+    return this.pngBase64DataUrl; 
   }
 }

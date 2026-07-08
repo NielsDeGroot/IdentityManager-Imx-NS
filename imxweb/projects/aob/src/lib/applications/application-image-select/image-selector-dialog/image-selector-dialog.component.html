@@ -17,8 +17,9 @@
     <button type="button" mat-raised-button color="warn" data-imx-identifier="selector-image-open-upload-button" (click)="file.click()">
       {{ '#LDS#Select image' | translate }}
     </button>
-    <input class="imx-hidden-element" #file type="file" multiple="false" accept="image/png" (click)="resetFileFormatErrorState()" (change)="emitFiles($event.target.files)" />
-    <div *ngIf="fileFormatError" class="imx-error-message">{{ '#LDS#Please select an image in PNG format.' | translate }}</div>
+    <!-- NS20260708 Added support for JPEG   -->
+    <input class="imx-hidden-element" #file type="file" multiple="false" accept="image/png, image/jpeg" (click)="resetFileFormatErrorState()" (change)="emitFiles($event.target.files)" />
+    <div *ngIf="fileFormatError" class="imx-error-message">{{ '#LDS#Please select an image in PNG or JPEG format.' | translate }}</div>
   </div>
   <div mat-dialog-actions align="end">
     <button mat-stroked-button type="button" mat-dialog-close data-imx-identifier="selector-dialog-button-cancel">

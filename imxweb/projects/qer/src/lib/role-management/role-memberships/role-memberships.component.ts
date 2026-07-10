@@ -58,7 +58,23 @@ export class RoleMembershipsComponent {
   }
 
   public canHavePrimaryMemberships(): boolean {
-    return this.roleService.ownershipInfo && this.roleService.targetMap.get(this.roleService.ownershipInfo.TableName).membership.hasPrimaryMemberships();
+   return this.roleService.ownershipInfo && this.roleService.targetMap.get(this.roleService.ownershipInfo.TableName).membership.hasPrimaryMemberships();
+  }
+  
+  // NS20260710 Simplified memberships
+  public showSecondaryMemberships(): boolean {
+    let show = true;
+    if (this.roleService.ownershipInfo.TableName === 'Department') {
+      show = false;
+    }
+    return show
   }
 
+  public showPrimaryMemberships(): boolean {
+    let show = true;
+    if (this.roleService.ownershipInfo.TableName === 'Org') {
+      show = false;
+    }
+    return show
+  }
 }

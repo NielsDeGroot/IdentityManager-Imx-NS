@@ -59,8 +59,17 @@ export class EditImageComponent implements CdrEditor, OnDestroy {
    * Gets a small hint, if the file format is not supported.
    */
   /* NS20260708 Added support for JPEG */
-  public get fileFormatHint(): string {
+  /* public get fileFormatHint(): string {
     return this.fileFormatError ? '#LDS#Please select an image in PNG or JPEG format.' : undefined;
+  } */
+  public get fileFormatHint(): string | undefined {
+    if (this.fileFormatError) {
+      return '#LDS#Please select an image in PNG or JPEG format.';
+    }
+    if (this.imageDimensionError) {
+      return '#LDS#The image must be exactly 945 x 710 pixels.';
+    }
+    return undefined;
   }
 
   /**
@@ -89,7 +98,10 @@ export class EditImageComponent implements CdrEditor, OnDestroy {
   public isLoading = false;
 
   private fileFormatError = false;
-
+  private readonly requiredImageWidth = 945; 
+  private readonly requiredImageHeight = 710;
+  private imageDimensionError = false
+  
   private readonly subscriptions: Subscription[] = [];
   private isWriting = false;
   /**
@@ -180,6 +192,7 @@ export class EditImageComponent implements CdrEditor, OnDestroy {
    */
   public resetFileFormatErrorState(): void {
     this.fileFormatError = false;
+    this.imageDimensionError = false;
   }
 
   /**
@@ -188,23 +201,39 @@ export class EditImageComponent implements CdrEditor, OnDestroy {
    */
   // TODO: Check Upgrade
   /* NS20260708 Added support for JPEG */
-  public emitFiles(files: EventTarget | null): void {
-    const fileList = (files as any).files as FileList;
-
+  public emitFiles(fileList: FileList | null): void {
     if (!fileList || fileList.length === 0) {
       return;
     }
-
     const file = fileList[0];
     const allowedTypes = ['image/png', 'image/jpeg'];
-
+    this.fileFormatError = false;
+    this.imageDimensionError = false; 
     if (!allowedTypes.includes(file.type)) {
       this.fileFormatError = true;
+      this.fileInput.nativeElement.value = ''; 
       return;
     }
-
-    this.fileFormatError = false;
-    this.fileSelector.emitFiles(fileList, file.type);
+    const image = new Image(); 
+    const imageUrl = URL.createObjectURL(file); 
+    image.onload = () => { 
+      URL.revokeObjectURL(imageUrl); 
+      const hasMinimumDimensions =
+        image.naturalWidth >= this.requiredImageWidth &&
+        image.naturalHeight >= this.requiredImageHeight;
+      if (!hasMinimumDimensions) {
+        this.imageDimensionError = true;
+        this.fileInput.nativeElement.value = '';
+        return;
+      }
+      this.fileSelector.emitFiles(fileList, file.type); 
+    };
+    image.onerror = () => { 
+      URL.revokeObjectURL(imageUrl); 
+      this.fileFormatError = true; 
+      this.fileInput.nativeElement.value = ''; 
+    };
+    image.src = imageUrl; 
   }
 
   /**
@@ -213,6 +242,7 @@ export class EditImageComponent implements CdrEditor, OnDestroy {
   public async remove(): Promise<void> {
     this.fileInput.nativeElement.value = '';
     this.fileFormatError = false;
+    this.imageDimensionError = false;
 
     this.logger.debug(this, 'Removing current image...');
     await this.writeValue(undefined);

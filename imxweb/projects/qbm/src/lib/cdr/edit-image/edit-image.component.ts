@@ -201,41 +201,37 @@ export class EditImageComponent implements CdrEditor, OnDestroy {
    */
   // TODO: Check Upgrade
   /* NS20260708 Added support for JPEG */
-  public emitFiles(fileList: FileList | null): void {
+  public async emitFiles(fileList: FileList | null): Promise<void> {
     if (!fileList || fileList.length === 0) {
       return;
     }
     const file = fileList[0];
     const allowedTypes = ['image/png', 'image/jpeg'];
     this.fileFormatError = false;
-    this.imageDimensionError = false; 
+    this.imageDimensionError = false;
     if (!allowedTypes.includes(file.type)) {
       this.fileFormatError = true;
-      this.fileInput.nativeElement.value = ''; 
+      this.fileInput.nativeElement.value = '';
       return;
     }
-    const image = new Image(); 
-    const imageUrl = URL.createObjectURL(file); 
-    image.onload = () => { 
-      URL.revokeObjectURL(imageUrl); 
+    try {
+      const image = await createImageBitmap(file);
       const hasMinimumDimensions =
-        image.naturalWidth >= this.requiredImageWidth &&
-        image.naturalHeight >= this.requiredImageHeight;
+        image.width >= this.requiredImageWidth &&
+        image.height >= this.requiredImageHeight;
+      image.close();
       if (!hasMinimumDimensions) {
         this.imageDimensionError = true;
         this.fileInput.nativeElement.value = '';
         return;
       }
-      this.fileSelector.emitFiles(fileList, file.type); 
-    };
-    image.onerror = () => { 
-      URL.revokeObjectURL(imageUrl); 
-      this.fileFormatError = true; 
-      this.fileInput.nativeElement.value = ''; 
-    };
-    image.src = imageUrl; 
+      this.fileSelector.emitFiles(fileList, file.type);
+    } catch {
+      this.fileFormatError = true;
+      this.fileInput.nativeElement.value = '';
+    }
   }
-
+  
   /**
    * Removes the current image and writes the 'empty' value to the column.
    */

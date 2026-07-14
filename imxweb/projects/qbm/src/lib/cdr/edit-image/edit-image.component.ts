@@ -1,74 +1,74 @@
 /*
- * ONE IDENTITY LLC. PROPRIETARY INFORMATION
- *
- * This software is confidential.  One Identity, LLC. or one of its affiliates or
- * subsidiaries, has supplied this software to you under terms of a
- * license agreement, nondisclosure agreement or both.
- *
- * You may not copy, disclose, or use this software except in accordance with
- * those terms.
- *
- *
- * Copyright 2023 One Identity LLC.
- * ALL RIGHTS RESERVED.
- *
- * ONE IDENTITY LLC. MAKES NO REPRESENTATIONS OR
- * WARRANTIES ABOUT THE SUITABILITY OF THE SOFTWARE,
- * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
- * TO THE IMPLIED WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE, OR
- * NON-INFRINGEMENT.  ONE IDENTITY LLC. SHALL NOT BE
- * LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE
- * AS A RESULT OF USING, MODIFYING OR DISTRIBUTING
- * THIS SOFTWARE OR ITS DERIVATIVES.
- *
- */
+* ONE IDENTITY LLC. PROPRIETARY INFORMATION
+*
+* This software is confidential. One Identity, LLC. or one of its affiliates or
+* subsidiaries, has supplied this software to you under terms of a
+* license agreement, nondisclosure agreement or both.
+*
+* You may not copy, disclose, or use this software except in accordance with
+* those terms.
+*
+* Copyright 2025 One Identity LLC.
+* ALL RIGHTS RESERVED.
+*
+* ONE IDENTITY LLC. MAKES NO REPRESENTATIONS OR
+* WARRANTIES ABOUT THE SUITABILITY OF THE SOFTWARE,
+* EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+* TO THE IMPLIED WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE, OR
+* NON-INFRINGEMENT. ONE IDENTITY LLC. SHALL NOT BE
+* LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE
+* AS A RESULT OF USING, MODIFYING OR DISTRIBUTING
+* THIS SOFTWARE OR ITS DERIVATIVES.
+*/
 
-import { Component, ElementRef, EventEmitter, OnDestroy, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  OnDestroy,
+  ViewChild,
+} from '@angular/core';
 import { UntypedFormControl, Validators } from '@angular/forms';
 import { Subject, Subscription } from 'rxjs';
 
-import { ServerError } from '../../base/server-error';
 import { ClassloggerService } from '../../classlogger/classlogger.service';
 import { FileSelectorService } from '../../file-selector/file-selector.service';
 import { Base64ImageService } from '../../images/base64-image.service';
-import { CdrEditor, ValueHasChangedEventArg } from '../cdr-editor.interface';
+import {
+  CdrEditor,
+  ValueHasChangedEventArg,
+} from '../cdr-editor.interface';
 import { ColumnDependentReference } from '../column-dependent-reference.interface';
-import { EditorBase } from '../editor-base';
 import { EntityColumnContainer } from '../entity-column-container';
 
 /**
- * Provides a {@link CdrEditor | CDR editor} for editing / viewing image data columns.
- *
- * To change its value, it uses an {@link ImageSelectComponent | image select component}.
- * When set to read-only, it uses an {@link ImageViewComponent | image view component} to display the content.
- */
+* Provides a CDR editor for editing and viewing image data columns.
+*
+* Selected PNG and JPEG images are centre-cropped and resized
+* to exactly 945 x 710 pixels before being saved. 
+*/
 @Component({
   selector: 'imx-edit-image',
   templateUrl: './edit-image.component.html',
   styleUrls: ['./edit-image.component.scss'],
+  standalone: false,
   providers: [FileSelectorService],
 })
 export class EditImageComponent implements CdrEditor, OnDestroy {
   /**
-   * @ignore only to access the file input from the template.
+   * Access to the file input from the template.
    */
-  @ViewChild('file') public fileInput: ElementRef;
+  @ViewChild('file') public fileInput: ElementRef<HTMLInputElement>;
 
   /**
-   * Gets a small hint, if the file format is not supported.
+   * Gets a hint when the selected file format is not supported.
    */
-  /* NS20260708 Added support for JPEG */
-  /* public get fileFormatHint(): string {
-    return this.fileFormatError ? '#LDS#Please select an image in PNG or JPEG format.' : undefined;
-  } */
   public get fileFormatHint(): string | undefined {
     if (this.fileFormatError) {
       return '#LDS#Please select an image in PNG or JPEG format.';
     }
-    if (this.imageDimensionError) {
-      return '#LDS#The image must be exactly 945 x 710 pixels.';
-    }
+
     return undefined;
   }
 
@@ -88,9 +88,10 @@ export class EditImageComponent implements CdrEditor, OnDestroy {
   public readonly columnContainer = new EntityColumnContainer<string>();
 
   /**
-   * Event that is emitted, after a value has been changed.
+   * Event emitted after a value has changed.
    */
-  public readonly valueHasChanged = new EventEmitter<ValueHasChangedEventArg>();
+  public readonly valueHasChanged =
+    new EventEmitter<ValueHasChangedEventArg>();
 
   /**
    * Indicator that the component is loading data from the server.
@@ -98,23 +99,13 @@ export class EditImageComponent implements CdrEditor, OnDestroy {
   public isLoading = false;
 
   private fileFormatError = false;
-  private readonly requiredImageWidth = 945; 
-  private readonly requiredImageHeight = 710;
-  private imageDimensionError = false
-  
+
+  // Fixed dimensions of the saved image. 
+  private readonly targetImageWidth = 945; 
+  private readonly targetImageHeight = 710; 
+
   private readonly subscriptions: Subscription[] = [];
   private isWriting = false;
-  /**
-   * @ignore
-   * Used for the template and displays the last server error, that occured while loading content.
-   */
-  public lastError: ServerError | undefined;
-  /**
-   * If an error occured, it returns its message
-   */
-  public get validationErrorMessage(): string {
-    return this.lastError?.toString() || '';
-  }
 
   constructor(
     private readonly logger: ClassloggerService,
@@ -122,28 +113,42 @@ export class EditImageComponent implements CdrEditor, OnDestroy {
     private readonly fileSelector: FileSelectorService,
   ) {
     this.subscriptions.push(
-      this.fileSelector.fileFormatError.subscribe(() => (this.fileFormatError = true)),
-      this.fileSelector.fileSelected.subscribe((filepath) => this.writeValue(this.imageProvider.getImageData(filepath))),
+      this.fileSelector.fileFormatError.subscribe(() => {
+        this.fileFormatError = true;
+      }),
+
+      this.fileSelector.fileSelected.subscribe((filepath) =>
+        this.writeValue(this.imageProvider.getImageData(filepath)),
+      ),
     );
   }
 
   /**
-   * Unsubscribes all events, after the 'OnDestroy' hook is triggered.
+   * Unsubscribes all events after the OnDestroy hook is triggered.
    */
   public ngOnDestroy(): void {
-    this.subscriptions.forEach((s) => s.unsubscribe());
+    this.subscriptions.forEach((subscription) =>
+      subscription.unsubscribe(),
+    );
   }
 
   /**
    * Binds a column dependent reference to the component.
-   * Subscribes to subjects from the column dependent reference and its container.
-   * @param cdref a column dependent reference.
+   *
+   * @param cdref A column dependent reference.
    */
   public bind(cdref: ColumnDependentReference): void {
     if (cdref && cdref.column) {
       this.columnContainer.init(cdref);
-      this.control.setValue(this.columnContainer.value, { emitEvent: false });
-      if (this.columnContainer.isValueRequired && this.columnContainer.canEdit) {
+
+      this.control.setValue(this.columnContainer.value, {
+        emitEvent: false,
+      });
+
+      if (
+        this.columnContainer.isValueRequired &&
+        this.columnContainer.canEdit
+      ) {
         this.control.setValidators(Validators.required);
       }
 
@@ -154,102 +159,202 @@ export class EditImageComponent implements CdrEditor, OnDestroy {
           }),
         );
       }
+
       this.subscriptions.push(
         this.columnContainer.subscribe(() => {
           if (this.isWriting) {
             return;
           }
+
           if (this.control.value !== this.columnContainer.value) {
             this.logger.trace(this, 'Control set to new value');
-            this.control.setValue(this.columnContainer.value, { emitEvent: false });
+
+            this.control.setValue(this.columnContainer.value, {
+              emitEvent: false,
+            });
           }
-          this.valueHasChanged.emit({ value: this.control.value });
+
+          this.valueHasChanged.emit({
+            value: this.control.value,
+          });
         }),
       );
 
       this.subscriptions.push(
         this.updateRequested.subscribe(() => {
           setTimeout(() => {
-            try {
-              if (this.control.value !== this.columnContainer.value) {
-                this.logger.trace(this, 'Control set to new value');
-                this.control.setValue(this.columnContainer.value, { emitEvent: false });
-              }
-              this.valueHasChanged.emit({ value: this.control.value });
-              this.setValidators();
-              this.control.updateValueAndValidity({ onlySelf: true, emitEvent: false });
-            } finally {
+            if (this.control.value !== this.columnContainer.value) {
+              this.logger.trace(this, 'Control set to new value');
+
+              this.control.setValue(this.columnContainer.value, {
+                emitEvent: false,
+              });
             }
+
+            this.valueHasChanged.emit({
+              value: this.control.value,
+            });
+
+            this.setValidators();
+
+            this.control.updateValueAndValidity({
+              onlySelf: true,
+              emitEvent: false,
+            });
           });
         }),
       );
-      this.control.addValidators(EditorBase.hasServerError(this));
     }
   }
 
   /**
-   * Resets the file format error.
+   * Resets the file-format error.
    */
   public resetFileFormatErrorState(): void {
     this.fileFormatError = false;
-    this.imageDimensionError = false;
   }
 
   /**
-   * Emits a list of files to the {@link FileSelectorService | file selector service}.
-   * @param files A list of files to emit as *.png.
+   * Validates, centre-crops and resizes a selected PNG or JPEG image.
+   *
+   * The saved image is always exactly 945 x 710 pixels.
+   * Smaller images are enlarged.
+   *
+   * @param fileList The selected files.
    */
-  // TODO: Check Upgrade
-  /* NS20260708 Added support for JPEG */
-  public async emitFiles(fileList: FileList | null): Promise<void> {
+  public async emitFiles(fileList: FileList | null): Promise<void> { 
     if (!fileList || fileList.length === 0) {
       return;
     }
+
     const file = fileList[0];
-    const allowedTypes = ['image/png', 'image/jpeg'];
+    const allowedTypes = ['image/png', 'image/jpeg']; 
     this.fileFormatError = false;
-    this.imageDimensionError = false;
-    if (!allowedTypes.includes(file.type)) {
+
+    if (!allowedTypes.includes(file.type)) { 
       this.fileFormatError = true;
-      this.fileInput.nativeElement.value = '';
+      this.clearFileInput(); 
       return;
     }
+
+    let image: ImageBitmap | undefined; 
+
     try {
-      const image = await createImageBitmap(file);
-      const hasMinimumDimensions =
-        image.width >= this.requiredImageWidth &&
-        image.height >= this.requiredImageHeight;
-      image.close();
-      if (!hasMinimumDimensions) {
-        this.imageDimensionError = true;
-        this.fileInput.nativeElement.value = '';
-        return;
-      }
-      this.fileSelector.emitFiles(fileList, file.type);
-    } catch {
+      image = await createImageBitmap(file); 
+      const croppedImage = this.cropImage(
+        image,
+        this.targetImageWidth,
+        this.targetImageHeight,
+        file.type,
+      ); 
+      await this.writeValue(
+        this.imageProvider.getImageData(croppedImage),
+      ); 
+    } catch (error) {
+      this.logger.error(
+        this,
+        'Unable to process the selected image.',
+        error,
+      ); 
+
       this.fileFormatError = true;
-      this.fileInput.nativeElement.value = '';
+      this.clearFileInput(); 
+    } finally {
+      if (image) {
+        image.close(); 
+      }
     }
   }
-  
+
   /**
-   * Removes the current image and writes the 'empty' value to the column.
+   * Removes the current image and writes an empty value to the column.
    */
   public async remove(): Promise<void> {
-    this.fileInput.nativeElement.value = '';
+    this.clearFileInput(); 
+
     this.fileFormatError = false;
-    this.imageDimensionError = false;
 
     this.logger.debug(this, 'Removing current image...');
+
     await this.writeValue(undefined);
   }
 
+  private cropImage( 
+    image: ImageBitmap,
+    targetWidth: number,
+    targetHeight: number,
+    mimeType: string,
+  ): string {
+    const canvas = document.createElement('canvas'); 
+
+    canvas.width = targetWidth; 
+    canvas.height = targetHeight; 
+
+    const context = canvas.getContext('2d'); 
+
+    if (!context) {
+      throw new Error('Unable to create an image canvas.'); 
+    }
+
+    const sourceAspectRatio = image.width / image.height; 
+    const targetAspectRatio = targetWidth / targetHeight; 
+
+    let sourceX = 0; 
+    let sourceY = 0; 
+    let sourceWidth = image.width; 
+    let sourceHeight = image.height; 
+
+    if (sourceAspectRatio > targetAspectRatio) {
+      sourceWidth = image.height * targetAspectRatio; 
+      sourceX = (image.width - sourceWidth) / 2; 
+    } else if (sourceAspectRatio < targetAspectRatio) {
+      sourceHeight = image.width / targetAspectRatio; 
+      sourceY = (image.height - sourceHeight) / 2; 
+    }
+
+    /*
+     * Draw the selected source area into a 945 x 710 canvas.
+     * Canvas automatically enlarges or reduces the source image.
+     */ 
+    context.drawImage(
+      image,
+      sourceX,
+      sourceY,
+      sourceWidth,
+      sourceHeight,
+      0,
+      0,
+      targetWidth,
+      targetHeight,
+    ); 
+
+    /*
+     * Preserve JPEG as JPEG and PNG as PNG.
+     */ 
+    if (mimeType === 'image/jpeg') {
+      return canvas.toDataURL('image/jpeg', 0.9); 
+    }
+
+    return canvas.toDataURL('image/png'); 
+  }
+
   /**
-   * Sets Validators.required, if the control is mandatory, else it's set to null.
-   * @ignore used internally
+   * Clears the selected file from the file input.
    */
-  private setValidators() {
-    if (this.columnContainer.isValueRequired && this.columnContainer.canEdit) {
+  private clearFileInput(): void { 
+    if (this.fileInput && this.fileInput.nativeElement) {
+      this.fileInput.nativeElement.value = ''; 
+    }
+  }
+
+  /**
+   * Sets Validators.required if the control is mandatory.
+   */
+  private setValidators(): void {
+    if (
+      this.columnContainer.isValueRequired &&
+      this.columnContainer.canEdit
+    ) {
       this.control.setValidators(Validators.required);
     } else {
       this.control.setValidators(null);
@@ -258,40 +363,61 @@ export class EditImageComponent implements CdrEditor, OnDestroy {
 
   /**
    * Updates the value for the CDR.
-   * @param value The new image url, that will be used as the new value.
+   *
+   * @param value The image value to write.
    */
-  private async writeValue(value: string): Promise<void> {
-    this.logger.debug(this, 'writeValue called with value', value);
-    if (this.control.errors && Object.keys(this.control.errors).some((elem) => elem !== 'generalError' && elem !== 'required')) {
-      this.logger.debug(this, 'writeValue - client validation failed');
+  private async writeValue(
+    value: string | undefined,
+  ): Promise<void> {
+    this.logger.debug(
+      this,
+      'writeValue called with value',
+      value,
+    );
+
+    if (
+      !this.columnContainer.canEdit ||
+      this.columnContainer.value === value
+    ) {
       return;
     }
 
-    if (!this.columnContainer.canEdit || this.columnContainer.value === value) {
-      return;
-    }
-
-    this.control.setValue(value, { emitEvent: false });
+    this.control.setValue(value, {
+      emitEvent: false,
+    });
 
     try {
       this.isLoading = true;
       this.isWriting = true;
-      this.logger.debug(this, 'writeValue - updateCdrValue...');
+
+      this.logger.debug(
+        this,
+        'writeValue - updateCdrValue...',
+      );
+
       await this.columnContainer.updateValue(value);
-      this.lastError = undefined;
-    } catch (e) {
-      this.logger.error(this, e);
-      this.lastError = e;
+    } catch (error) {
+      this.logger.error(this, error);
     } finally {
       this.isLoading = false;
       this.isWriting = false;
 
-      if (!this.lastError && this.control.value !== this.columnContainer.value) {
-        this.control.setValue(this.columnContainer.value, { emitEvent: false });
-        this.logger.debug(this, 'form control value is set to', this.control.value);
+      if (this.control.value !== this.columnContainer.value) {
+        this.control.setValue(this.columnContainer.value, {
+          emitEvent: false,
+        });
+
+        this.logger.debug(
+          this,
+          'form control value is set to',
+          this.control.value,
+        );
       }
-      this.control.updateValueAndValidity();
-      this.valueHasChanged.emit({ value: this.control.value, forceEmit: true });
+
+      this.valueHasChanged.emit({
+        value: this.control.value,
+        forceEmit: true,
+      });
     }
 
     this.control.markAsDirty();

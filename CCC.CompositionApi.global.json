@@ -10,7 +10,7 @@
         "ServerConfig/ITShopConfig/VI_ITShop_ApproverCanSetValidUntil": true,
         "ServerConfig/ITShopConfig/VI_ITShop_ApproverCanSetValidFrom": true,
         "ServerConfig/ITShopConfig/VI_ITShop_WantSeeQueryToPerson": false,
-        "ServerConfig/VI_ITShop_Filter_PersonOrderFor": "UID_Person IN (\n\tSELECT UID_Person\n\tFROM QER_VEditEmployee\n\tWHERE UID_PersonHead = '%useruid%'\n\t)\nOR EXISTS (\n\tSELECT 1\n\tFROM PersonInAErole\n\tWHERE UID_AERole IN (\n\t\t\t'CCC-AEROLE-REQUESTADMIN'\n\t\t\t,'QER-AEROLE-PERSONADMIN-ADMIN'\n\t\t\t)\n\t\tAND UID_Person = '%useruid%'\n\t)",
+        "ServerConfig/VI_ITShop_Filter_PersonOrderFor": "UID_Person IN (\n\tSELECT UID_Person\n\tFROM QER_VEditEmployee\n\tWHERE UID_PersonHead = '%useruid%'\n\t)\nOR EXISTS (\n\tSELECT 1\n\tFROM PersonInAErole\n\tWHERE UID_AERole IN (\n\t\t\t'CCC-AEROLE-ITSHOPADMIN-REQUESTADMIN'\n\t\t\t,'QER-AEROLE-PERSONADMIN-ADMIN'\n\t\t\t)\n\t\tAND UID_Person = '%useruid%'\n\t)",
         "ServerConfig/ITShopConfig/VI_ITShop_ApproverReasonMandatoryOnDeny": true,
         "ServerConfig/ITShopConfig/VI_ITShop_ForeignFuncCheck": false,
         "ServerConfig/ITShopConfig/VI_ITShop_ProductSelectionFromTemplate": false,

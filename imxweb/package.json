@@ -68,7 +68,7 @@
     "url-polyfill": "^1.1.12",
     "web-animations-js": "^2.3.2",
     "whatwg-fetch": "^3.0.0",
-    "zone.js": "~0.11.5"
+    "zone.js": "~0.16.2"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^14.2.13",

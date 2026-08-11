@@ -101,8 +101,8 @@ export class EditImageComponent implements CdrEditor, OnDestroy {
   private fileFormatError = false;
 
   // Fixed dimensions of the saved image. 
-  private readonly targetImageWidth = 945; 
-  private readonly targetImageHeight = 710; 
+  private readonly targetImageWidth = 710; 
+  private readonly targetImageHeight = 945; 
 
   private readonly subscriptions: Subscription[] = [];
   private isWriting = false;
@@ -217,7 +217,7 @@ export class EditImageComponent implements CdrEditor, OnDestroy {
   /**
    * Validates, centre-crops and resizes a selected PNG or JPEG image.
    *
-   * The saved image is always exactly 945 x 710 pixels.
+   * The saved image is always exactly 710 x 945 pixels.
    * Smaller images are enlarged.
    *
    * @param fileList The selected files.
@@ -313,7 +313,7 @@ export class EditImageComponent implements CdrEditor, OnDestroy {
     }
 
     /*
-     * Draw the selected source area into a 945 x 710 canvas.
+     * Draw the selected source area into a 710 x 945 canvas.
      * Canvas automatically enlarges or reduces the source image.
      */ 
     context.drawImage(

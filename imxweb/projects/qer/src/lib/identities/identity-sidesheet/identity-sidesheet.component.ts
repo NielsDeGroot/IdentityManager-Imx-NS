@@ -87,6 +87,7 @@ export class IdentitySidesheetComponent implements OnInit, OnDestroy {
       selectedIdentity: PortalPersonReports | PortalAdminPerson;
       canEdit: boolean;
       canAssignNewManager: boolean;
+      canDeactivateIdentity: boolean;
     },
     public identities: IdentitiesService,
     private readonly reports: IdentitiesReportsService,

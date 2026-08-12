@@ -122,6 +122,7 @@ export class BusinessOwnerChartSummaryComponent implements OnInit {
              This workaround is implemented because the API server always forcibly sets the Person.UID_Personhead to read-only.
           */
           canAssignNewManager: identity.GetEntity().GetColumn('ExitDate').GetMetadata().CanEdit(),
+          canDeactivateIdentity: identity.GetEntity().GetColumn('IsInActive').GetMetadata().CanEdit(),
         },
       })
       .afterClosed()

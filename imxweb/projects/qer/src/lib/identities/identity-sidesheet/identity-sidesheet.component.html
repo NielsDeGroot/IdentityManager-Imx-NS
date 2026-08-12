@@ -64,10 +64,9 @@
             </eui-badge>
           </div>
           <form [formGroup]="detailsFormGroup">
-            <!-- NS20260703 Disable set Identity active/inactive and set Identity poses a security risk
             <div class="imx-toggle-container">
               <mat-slide-toggle
-                *ngIf="data.isAdmin"
+                *ngIf="data?.canDeactivateIdentity === true && data.canEdit"
                 class="custom-toggle"
                 #toggle
                 [formControl]="isActiveFormControl"
@@ -77,6 +76,7 @@
                 <span [translate]="toggle.checked ? '#LDS#Identity is active' : '#LDS#Identity is inactive'"></span>
               </mat-slide-toggle>
 
+              <!-- NS20260812 Disable Identity poses a security risk
               <mat-slide-toggle
                 class="custom-toggle"
                 #incidentToggle
@@ -87,9 +87,8 @@
                 [attr.data-imx-identifier]="'identity-sidesheet-toggle-for-column-' + data.selectedIdentity.IsSecurityIncident.Column.ColumnName"
               >
                 <span [translate]="incidentToggle.checked ? '#LDS#Identity poses a security risk' : '#LDS#Identity does not pose a security risk'"></span>
-              </mat-slide-toggle>
+              </mat-slide-toggle> -->
             </div>
-            -->
             <mat-accordion>
               <mat-expansion-panel [expanded]="true" *ngIf="cdrListPersonal.length > 0">
                 <mat-expansion-panel-header>

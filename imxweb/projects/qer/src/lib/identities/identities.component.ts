@@ -118,6 +118,7 @@ export class DataExplorerIdentitiesComponent implements OnInit, OnDestroy, SideN
   public isPersonAdmin: boolean;
   public isAuditor: boolean;
   public canAssignNewManager: boolean;
+  public canDeactivateIdentity: boolean;
   public extensions: IExtension[] = [];
 
   private projectConfig: ProjectConfig;
@@ -460,6 +461,7 @@ export class DataExplorerIdentitiesComponent implements OnInit, OnDestroy, SideN
              This workaround is implemented because the API server always forcibly sets the Person.UID_Personhead to read-only.
           */
           canAssignNewManager: identity.GetEntity().GetColumn('ExitDate').GetMetadata().CanEdit(),
+          canDeactivateIdentity: identity.GetEntity().GetColumn('IsInActive').GetMetadata().CanEdit(),
         },
         testId: 'identities-view-identity-sidesheet',
       })

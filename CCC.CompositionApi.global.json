@@ -93,8 +93,6 @@
           "UID_Department",
           "EntryDate",
           "ExitDate",
-          "IsInActive",
-          "IsTemporaryDeactivated",
           "UID_PersonHead",
           "ImportSource"
         ],

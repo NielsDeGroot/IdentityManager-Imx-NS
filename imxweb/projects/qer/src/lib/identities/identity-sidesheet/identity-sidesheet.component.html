@@ -89,7 +89,7 @@
                 <span [translate]="incidentToggle.checked ? '#LDS#Identity poses a security risk' : '#LDS#Identity does not pose a security risk'"></span>
               </mat-slide-toggle> -->
             </div>
-            <mat-accordion>
+            <mat-accordion [multi]="true">
               <mat-expansion-panel [expanded]="true" *ngIf="cdrListPersonal.length > 0">
                 <mat-expansion-panel-header>
                   <mat-panel-title>
@@ -104,7 +104,7 @@
                 >
                 </imx-cdr-editor>
               </mat-expansion-panel>
-              <mat-expansion-panel *ngIf="cdrListOrganizational.length > 0">
+              <mat-expansion-panel [expanded]="true" *ngIf="cdrListOrganizational.length > 0">
                 <mat-expansion-panel-header>
                   <mat-panel-title>
                     {{ '#LDS#Organizational information' | translate }}

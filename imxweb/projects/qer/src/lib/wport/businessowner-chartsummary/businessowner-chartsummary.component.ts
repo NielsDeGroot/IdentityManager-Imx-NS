@@ -35,7 +35,6 @@ import { IdentitySidesheetComponent } from '../../identities/identity-sidesheet/
 import { ProjectConfigurationService } from '../../project-configuration/project-configuration.service';
 import { QerApiService } from '../../qer-api-client.service';
 import { UserModelService } from '../../user/user-model.service';
-import { DashboardService } from '../start/dashboard.service';
 import { CreateNewIdentityComponent } from '../../identities/create-new-identity/create-new-identity.component';
 import { IdentitiesService } from '../../identities/identities.service';
 
@@ -47,9 +46,7 @@ import { IdentitiesService } from '../../identities/identities.service';
 export class BusinessOwnerChartSummaryComponent implements OnInit {
   public reports: PortalPersonReports[];
   public ownerships: OwnershipInformation[];
-  public get viewReady(): boolean {
-    return !this.dashboardService.isBusy;
-  }
+  public viewReady = false;
   public allReportsCount: number;
   public canAssignNewManager: boolean;
 
@@ -59,7 +56,6 @@ export class BusinessOwnerChartSummaryComponent implements OnInit {
     private readonly router: Router,
     private readonly qerClient: QerApiService,
     private readonly busyService: EuiLoadingService,
-    private readonly dashboardService: DashboardService,
     private readonly sideSheet: EuiSidesheetService,
     private readonly errorHandler: ErrorHandler,
     private readonly configService: ProjectConfigurationService,
@@ -67,10 +63,10 @@ export class BusinessOwnerChartSummaryComponent implements OnInit {
     private readonly userModelService: UserModelService,
     public readonly qerPermissions: QerPermissionsService,
     public readonly translate: TranslateService
-  ) {}
+  ) { }
 
   public async ngOnInit(): Promise<void> {
-    const busy = this.dashboardService.beginBusy();
+    this.viewReady = false;
     try {
       const userConfig = await this.userModelService.getUserConfig();
       this.ownerships = userConfig.Ownerships;
@@ -78,7 +74,7 @@ export class BusinessOwnerChartSummaryComponent implements OnInit {
       this.projectConfig = await this.configService.getConfig();
       await this.getData();
     } finally {
-      busy.endBusy();
+      this.viewReady = true;
     }
   }
 
@@ -132,7 +128,7 @@ export class BusinessOwnerChartSummaryComponent implements OnInit {
   }
 
   public async openCreateNewIdentitySidesheet(): Promise<void> {
-   const identityCreated = await this.sideSheet.open(CreateNewIdentityComponent, {
+    const identityCreated = await this.sideSheet.open(CreateNewIdentityComponent, {
       title: await this.translate.get('#LDS#Heading Create Identity').toPromise(),
       headerColour: 'iris-blue',
       padding: '0px',
@@ -147,13 +143,14 @@ export class BusinessOwnerChartSummaryComponent implements OnInit {
     }).afterClosed().toPromise();
 
     if (identityCreated) {
-      const busy = this.dashboardService.beginBusy();
+      this.viewReady = false;
       try {
         await this.getData();
       } finally {
-        busy.endBusy();
+        this.viewReady = true;
       }
- }  }
+    }
+  }
 
   public openOwnership(ownerShip: OwnershipInformation): void {
     this.router.navigate(['myresponsibilities', ownerShip.TableName]);
@@ -161,7 +158,7 @@ export class BusinessOwnerChartSummaryComponent implements OnInit {
 
   private async getData(): Promise<void> {
     await this.loadIndirectOrDirectReports();
-    if (this.allReportsCount > 0 ) {
+    if (this.allReportsCount > 0) {
       await this.loadDirectReports();
     }
   }

@@ -28,8 +28,8 @@ import { OverlayRef } from '@angular/cdk/overlay';
 import { Injectable } from '@angular/core';
 import { QerApiService } from '../qer-api-client.service';
 import { EuiLoadingService } from '@elemental-ui/core';
-import { CollectionLoadParameters, DataModel, DisplayColumns, EntitySchema, ExtendedTypedEntityCollection, TypedEntityBuilder, ValType } from 'imx-qbm-dbts';
-import { PortalDevices, PortalRespTeamResponsibilities, ResponsibilitiesExtendedData } from 'imx-api-qer';
+import { CollectionLoadParameters, DataModel, EntitySchema, ExtendedTypedEntityCollection, MethodDescriptor, TimeZoneInfo } from 'imx-qbm-dbts';
+import { PortalRespTeamResponsibilities, ResponsibilitiesExtendedData } from 'imx-api-qer';
 
 @Injectable({
   providedIn: 'root',
@@ -40,7 +40,7 @@ export class TeamResponsibilitiesService {
   constructor(
     private readonly qerClient: QerApiService,
     private readonly busyService: EuiLoadingService
-    ) {}
+  ) { }
 
   public get responsibilitySchema(): EntitySchema {
     return this.qerClient.typedClient.PortalRespTeamResponsibilities.GetSchema();
@@ -53,7 +53,7 @@ export class TeamResponsibilitiesService {
   }
 
   public handleCloseLoader(): void {
-    if(this.busyIndicator) {
+    if (this.busyIndicator) {
       setTimeout(() => {
         this.busyService.hide(this.busyIndicator);
         this.busyIndicator = undefined;
@@ -69,8 +69,21 @@ export class TeamResponsibilitiesService {
     return this.qerClient.client.portal_resp_team_responsibilities_datamodel_get();
   }
 
-  public async countInactiveIdentity(): Promise<number>{
-    const responsibilities = await this.get({forinactive: '1', PageSize: -1})
-    return responsibilities.totalCount;
+  public async countInactiveIdentity(): Promise<number> {
+    return this.qerClient.apiClient.processRequest(this.getInactiveResponsibilitiesCountDescriptor());
+  }
+
+  private getInactiveResponsibilitiesCountDescriptor(): MethodDescriptor<number> {
+    return {
+      path: '/portal/resp/team/responsibilities/count',
+      method: 'GET',
+      parameters: [],
+      headers: {
+        'imx-timezone': TimeZoneInfo.get()
+      },
+      credentials: 'include',
+      observe: 'response',
+      responseType: 'json',
+    };
   }
 }

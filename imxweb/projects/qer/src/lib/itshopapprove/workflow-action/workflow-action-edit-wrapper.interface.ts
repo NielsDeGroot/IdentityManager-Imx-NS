@@ -24,7 +24,6 @@
  *
  */
 
-import { UntypedFormGroup } from '@angular/forms';
 import { Approval } from '../approval';
 import { WorkflowActionEdit } from './workflow-action-edit.interface';
 
@@ -32,6 +31,6 @@ export interface WorkflowActionEditWrapper {
   title: string;
   message: string;
   data: WorkflowActionEdit;
-  apply: (request: Approval, formGroup: UntypedFormGroup) => Promise<any>;
+  apply: (request: Approval) => Promise<any>;
   discardChangesOnAbort?: boolean;
 }

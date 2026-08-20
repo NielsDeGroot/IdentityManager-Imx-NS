@@ -27,7 +27,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { DashboardService, PendingItemsType, UserModelService } from 'qer';
+import { PendingItemsType, UserModelService } from 'qer';
 
 @Component({
   templateUrl: './dashboard-plugin.component.html'
@@ -38,18 +38,10 @@ export class DashboardPluginComponent implements OnInit {
 
   constructor(
     public readonly router: Router,
-    private readonly dashboardService: DashboardService,
     private readonly userModelSvc: UserModelService
   ) { }
 
   public async ngOnInit(): Promise<void> {
-
-    const busy = this.dashboardService.beginBusy();
-
-    try {
-      this.pendingItems = await this.userModelSvc.getPendingItems();
-    } finally {
-      busy.endBusy();
-    }
+    this.pendingItems = await this.userModelSvc.getPendingItems();
   }
 }

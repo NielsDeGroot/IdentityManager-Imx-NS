@@ -24,7 +24,7 @@
  *
  */
 
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, NgZone, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { SystemInfo } from 'imx-api-qbm';
@@ -33,7 +33,6 @@ import { imx_SessionService, SplashService, SystemInfoService } from 'qbm';
 import { ProjectConfigurationService } from '../../project-configuration/project-configuration.service';
 import { PendingItemsType } from '../../user/pending-items-type.interface';
 import { UserModelService } from '../../user/user-model.service';
-import { DashboardService } from './dashboard.service';
 
 @Component({
   templateUrl: './start.component.html',
@@ -45,31 +44,23 @@ export class StartComponent implements OnInit {
   public projectConfig: QerProjectConfig & ProjectConfig;
   public pendingItems: PendingItemsType;
   public systemInfo: SystemInfo;
-  public viewReady: boolean;
+  public viewReady = false;
+  public renderDeferredDashboard = false;
   public userUid: string;
 
   constructor(
     public readonly router: Router,
-    private readonly dashboardService: DashboardService,
     private readonly userModelSvc: UserModelService,
     private readonly systemInfoService: SystemInfoService,
     private readonly sessionService: imx_SessionService,
-    private readonly detectRef: ChangeDetectorRef,
     private readonly projectConfigurationService: ProjectConfigurationService,
     private readonly splash: SplashService,
+    private readonly ngZone: NgZone,
   ) { }
 
   public async ngOnInit(): Promise<void> {
-    this.dashboardService.busyStateChanged.subscribe((busy) => {
-      this.viewReady = !busy;
-      this.detectRef.detectChanges();
-    });
-    const busy = this.dashboardService.beginBusy();
     try {
-      // The following calls are independent of each other and can be issued in parallel.
-      // This is important on installations where individual REST calls may be slow
-      // (e.g. read-only secondary SQL databases): with Promise.all, the splash-screen
-      // wall-clock time is bounded by the slowest single call instead of the sum.
+      // Core startup data for first page interactivity.
       const [userConfig, pendingItems, projectConfig, systemInfo, sessionState] = await Promise.all([
         this.userModelSvc.getUserConfig(),
         this.userModelSvc.getPendingItems(),
@@ -83,8 +74,12 @@ export class StartComponent implements OnInit {
       this.systemInfo = systemInfo;
       this.userUid = sessionState.UserUid;
     } finally {
+      this.viewReady = true;
+      // Defer dashboard widget instantiation until after the first render.
+      requestAnimationFrame(() => this.ngZone.run(() => {
+        this.renderDeferredDashboard = true;
+      }));
       this.splash.close();
-      busy.endBusy();
     }
   }
 

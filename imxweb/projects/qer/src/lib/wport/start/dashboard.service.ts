@@ -27,6 +27,7 @@
 import { Injectable } from "@angular/core";
 import { BusyService } from "qbm";
 
+/** @deprecated Use per-widget loading states instead of shared dashboard busy-state coupling. */
 @Injectable({ providedIn: 'root' })
 export class DashboardService extends BusyService {
 

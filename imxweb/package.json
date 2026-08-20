@@ -10,6 +10,7 @@
     "build:dynamic": "ng build --configuration dynamic",
     "build:watch": "ng build --watch --configuration development",
     "build:watch:dynamic": "ng build --watch --configuration dynamic",
+    "build:dynamic:plugins": "ng build tsb --configuration production && ng build aad --configuration dynamic && ng build aob --configuration dynamic && ng build apc --configuration dynamic && ng build att --configuration dynamic && ng build cpl --configuration dynamic && ng build hds --configuration dynamic && ng build olg --configuration dynamic && ng build pol --configuration dynamic && ng build rmb --configuration dynamic && ng build rms --configuration dynamic && ng build rps --configuration dynamic && ng build sac --configuration dynamic && ng build tsb --configuration dynamic && ng build o3t --configuration dynamic && ng build uci --configuration dynamic",
     "build:app": "ng build --aot --configuration production",
     "build:app:debug": "ng build --configuration production --source-map true",
     "build:lib": "ng build --configuration production",

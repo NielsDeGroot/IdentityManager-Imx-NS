@@ -362,6 +362,9 @@ export class AttestationDecisionComponent implements OnInit, OnDestroy {
 
     try {
       const groupedData = this.groupedData[groupInfo.key];
+      if (!groupedData?.navigationState) {
+        return;
+      }
       const navigationState = { ...groupedData.navigationState, Escalation: this.viewEscalation };
       groupedData.data = groupInfo.isInitial ? { totalCount: 0, Data: [] } : await this.attestationCases.get(navigationState);
       groupedData.settings = {

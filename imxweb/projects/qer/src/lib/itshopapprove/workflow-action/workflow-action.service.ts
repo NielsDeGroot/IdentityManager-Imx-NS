@@ -24,28 +24,27 @@
  *
  */
 
-import { OverlayRef } from '@angular/cdk/overlay';
 import { Injectable, Type } from '@angular/core';
+import { OverlayRef } from '@angular/cdk/overlay';
 import { EuiLoadingService, EuiSidesheetService } from '@elemental-ui/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 
-import { UntypedFormGroup } from '@angular/forms';
-import { CompareOperator, EntityData, FilterType, ValType } from 'imx-qbm-dbts';
+import { CompareOperator, FilterType, EntityData, ValType } from 'imx-qbm-dbts';
 import { BaseCdr, BaseReadonlyCdr, ClassloggerService, EntityService, ExtService, SnackBarService } from 'qbm';
-import { JustificationType } from '../../justification/justification-type.enum';
-import { JustificationService } from '../../justification/justification.service';
-import { PersonService } from '../../person/person.service';
+import { WorkflowActionComponent } from './workflow-action.component';
 import { ProjectConfigurationService } from '../../project-configuration/project-configuration.service';
-import { QerApiService } from '../../qer-api-client.service';
-import { TermsOfUseAcceptComponent } from '../../terms-of-use/terms-of-use-accept.component';
-import { UserModelService } from '../../user/user-model.service';
+import { PersonService } from '../../person/person.service';
 import { Approval } from '../approval';
 import { ApprovalsService } from '../approvals.service';
-import { getSubLevel } from '../decision-step.service';
+import { QerApiService } from '../../qer-api-client.service';
+import { JustificationService } from '../../justification/justification.service';
+import { JustificationType } from '../../justification/justification-type.enum';
 import { WorkflowActionEditWrapper } from './workflow-action-edit-wrapper.interface';
 import { WorkflowActionParameters } from './workflow-action-parameters.interface';
-import { WorkflowActionComponent } from './workflow-action.component';
+import { TermsOfUseAcceptComponent } from '../../terms-of-use/terms-of-use-accept.component';
+import { UserModelService } from '../../user/user-model.service';
+import { getSubLevel } from '../decision-step.service';
 @Injectable({
   providedIn: 'root',
 })
@@ -341,24 +340,18 @@ export class WorkflowActionService {
         isInEscalationView: isEscalation,
         withGuidance: true,
       },
-      apply: async (request: Approval, formGroup: UntypedFormGroup) => {
-        if (request.canSetValidFrom() && formGroup.controls.ValidFrom) {
-          const from = formGroup.controls.ValidFrom!.value;
+      apply: async (request: Approval) => {
+        if (request.canSetValidFrom() && actionParameters.validFrom) {
+          const from = actionParameters.validFrom.column.GetValue();
           if (from) {
             request.ValidFrom.value = addTimeNowToDate(from);
-          } else {
-            // The value was removed, so set it to null in order to not send an invalid date to the backend
-            await request.ValidFrom.Column.PutValue(null);
           }
         }
 
-        if (request.canSetValidUntil(itShopConfig) && formGroup.controls.ValidUntil) {
-          const until = formGroup.controls.ValidUntil!.value;
+        if (request.canSetValidUntil(itShopConfig) && actionParameters.validUntil) {
+          const until = actionParameters.validUntil.column.GetValue();
           if (until) {
             request.ValidUntil.value = addTimeNowToDate(until);
-          } else {
-            // The value was removed, so set it to null in order to not send an invalid date to the backend
-            await request.ValidUntil.Column.PutValue(null);
           }
         }
 
@@ -562,7 +555,7 @@ export class WorkflowActionService {
       let success: boolean;
       try {
         for (const request of config.data.requests) {
-          await config.apply(request, result as UntypedFormGroup);
+          await config.apply(request);
         }
         success = true;
       } finally {

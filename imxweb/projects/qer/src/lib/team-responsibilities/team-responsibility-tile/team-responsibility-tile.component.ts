@@ -45,7 +45,9 @@ export class TeamResponsibilityTileComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     const permission = await this.qerPermissionsService.isPersonManager();
     if (permission) {
+      /* NS20260923 Issue with IN clause limit: Could not deserialize FROM QERVPersonAndAERoles COUNT WHERE UID_Person IN ...
       this.inactiveResponsibilitiesCount = await this.teamResponsibilitiesService.countInactiveIdentity();
+      */
     }
   }
 }

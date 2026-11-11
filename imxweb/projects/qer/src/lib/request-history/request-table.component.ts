@@ -24,7 +24,7 @@
  *
  */
 
-import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild, OnChanges, SimpleChanges } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { EuiSidesheetService } from '@elemental-ui/core';
 import { TranslateService } from '@ngx-translate/core';
@@ -69,7 +69,7 @@ import { ViewConfigService } from '../view-config/view-config.service';
   styleUrls: ['./request-table.component.scss'],
   selector: 'imx-request-table',
 })
-export class RequestTableComponent implements OnInit, OnDestroy {
+export class RequestTableComponent implements OnInit, OnDestroy, OnChanges {
   public additional: IClientProperty[] = [];
   public get entitySchema(): EntitySchema {
     return this.requestHistoryService.PortalItshopRequestsSchema;
@@ -111,18 +111,24 @@ export class RequestTableComponent implements OnInit, OnDestroy {
   }
 
   public get canPerformActions(): boolean {
+    if (!this.selectedItems.length || this.isReadOnly) {
+      return false;
+    }
+
+    if (this.actionMode === 'revoke') {
+      return this.canWithdrawRequest || this.canUnsubscribeRequest;
+    }
+
     return (
-      this.selectedItems.length > 0 &&
-      !this.isReadOnly &&
-      (this.canWithdrawAdditionalApprover ||
-        this.canWithdrawDelegation ||
-        this.canRecallLastQuestion ||
-        this.canRevokeHoldStatus ||
-        this.canWithdrawRequest ||
-        this.canProlongateRequest ||
-        this.canUnsubscribeRequest ||
-        this.canCopyItems ||
-        this.canEscalateDecision)
+      this.canWithdrawAdditionalApprover ||
+      this.canWithdrawDelegation ||
+      this.canRecallLastQuestion ||
+      this.canRevokeHoldStatus ||
+      this.canWithdrawRequest ||
+      this.canProlongateRequest ||
+      this.canUnsubscribeRequest ||
+      this.canCopyItems ||
+      this.canEscalateDecision
     );
   }
 
@@ -130,6 +136,7 @@ export class RequestTableComponent implements OnInit, OnDestroy {
   @Input() public uidRecipientRequester: string;
   @Input() public isArchivedRequests: boolean;
   @Input() public uidRecipient: string;
+  @Input() public actionMode: 'all' | 'revoke' = 'all';
 
   @ViewChild('requestHistoryFilter', { static: false }) public requestHistoryFilters: RequestHistoryFilterComponent;
 
@@ -152,9 +159,6 @@ export class RequestTableComponent implements OnInit, OnDestroy {
   private displayedColumns: IClientProperty[];
   private readonly subscriptions: Subscription[] = [];
   private readonly filterPresets = { ShowEndingSoon: undefined, ShowMyPending: undefined };
-  private selectionChangeToken = 0;
-  private selectionHydrationAbortController = new AbortController();
-  private readonly selectionHydrationCache = new Map<string, ItshopRequest>();
   public readonly busyService = new BusyService();
   @ViewChild(DataTableComponent) private readonly table: DataTableComponent<TypedEntity>;
   @ViewChild(DataSourceToolbarComponent) private readonly dataToolbar: DataSourceToolbarComponent;
@@ -167,7 +171,7 @@ export class RequestTableComponent implements OnInit, OnDestroy {
     private readonly requestHistoryService: RequestHistoryService,
     private viewConfigService: ViewConfigService,
     private readonly session: imx_SessionService,
-    readonly settingsService: SettingsService,
+    private readonly settingsService: SettingsService,
     private readonly projectConfig: ProjectConfigurationService,
     private readonly activatedRoute: ActivatedRoute,
     private readonly ext: ExtService
@@ -190,6 +194,12 @@ export class RequestTableComponent implements OnInit, OnDestroy {
     );
   }
 
+  ngOnChanges() {
+    if (this.uidRecipient) {
+      this.getData();
+    }
+  }
+
   public async ngOnInit(): Promise<void> {
     this.displayedColumns = [
       this.entitySchema.Columns.DisplayOrg,
@@ -208,20 +218,8 @@ export class RequestTableComponent implements OnInit, OnDestroy {
       this.dataModel = await this.requestHistoryService.getDataModel(this.userUid);
       this.viewConfig = await this.viewConfigService.getInitialDSTExtension(this.dataModel, this.viewConfigPath);
       this.activatedRoute.queryParams.subscribe((params) => this.updateFiltersFromRouteParams(params));
-      this.filterOptions = await this.requestHistoryService.getFilterOptions(this.userUid, this.filterPresets, this.dataModel);
+      this.filterOptions = await this.requestHistoryService.getFilterOptions(this.userUid, this.filterPresets);
       this.itShopConfig = (await this.projectConfig.getConfig()).ITShopConfig;
-
-      // After getConfig() resolves, settingsService.DefaultPageSize reflects the project's
-      // configured default (project-configuration.service.ts assigns it). The constructor,
-      // however, captured the pre-config default into navigationState.PageSize, so the first
-      // data load could otherwise be issued with the stale platform default (20). Refresh
-      // the page size here, preserving filter properties already added to navigationState
-      // (uidpwo, ShowEndingSoon, ShowMyPending, UID_Person, etc.).
-      // Issue: SR 03043707 (Request History timeout on first load when project default > 20)
-      this.navigationState = {
-        ...this.navigationState,
-        PageSize: this.settingsService.DefaultPageSize,
-      };
 
       await this.getData(null, true);
     } finally {
@@ -230,7 +228,6 @@ export class RequestTableComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy(): void {
-    this.selectionHydrationAbortController.abort();
     this.subscriptions.forEach((s) => s.unsubscribe());
   }
 
@@ -257,50 +254,8 @@ export class RequestTableComponent implements OnInit, OnDestroy {
     this.navigationState.ShowMyPending = this.filterPresets.ShowMyPending;
   }
 
-  public async onSelectionChanged(items: ItshopRequest[]): Promise<void> {
-    const selectionChangeToken = ++this.selectionChangeToken;
-    this.selectionHydrationAbortController.abort();
-    this.selectionHydrationAbortController = new AbortController();
-    const selectedItems = items || [];
-    this.selectedItems = selectedItems;
-
-    if (!selectedItems.length) {
-      return;
-    }
-
-    const hydratedItems: ItshopRequest[] = [];
-    // Hydrate sequentially to avoid a burst of detail requests against the API server when many rows are selected.
-    for (const item of selectedItems) {
-      hydratedItems.push(await this.getHydratedSelectionItem(item, this.selectionHydrationAbortController.signal));
-
-      if (selectionChangeToken !== this.selectionChangeToken) {
-        return;
-      }
-    }
-
-    if (selectionChangeToken === this.selectionChangeToken) {
-      this.selectedItems = hydratedItems;
-    }
-  }
-
-  private async getHydratedSelectionItem(item: ItshopRequest, signal: AbortSignal): Promise<ItshopRequest> {
-    const uidPwo = item.GetEntity().GetKeys()[0];
-    if (!uidPwo) {
-      return item;
-    }
-
-    const cachedItem = this.selectionHydrationCache.get(uidPwo);
-    if (cachedItem) {
-      return cachedItem;
-    }
-
-    try {
-      const hydratedItem = (await this.requestHistoryService.getRequest(this.userUid, uidPwo, signal)) || item;
-      this.selectionHydrationCache.set(uidPwo, hydratedItem);
-      return hydratedItem;
-    } catch {
-      return item;
-    }
+  public onSelectionChanged(items: ItshopRequest[]): void {
+    this.selectedItems = items;
   }
 
   public async updateConfig(config: ViewConfigData): Promise<void> {
@@ -316,7 +271,6 @@ export class RequestTableComponent implements OnInit, OnDestroy {
   }
 
   public onSearch(keywords: string): Promise<void> {
-    this.requestHistoryService.abortCall();
     const navigationState = {
       ...this.navigationState,
       ...{
@@ -336,7 +290,6 @@ export class RequestTableComponent implements OnInit, OnDestroy {
 
   public async getData(newState?: RequestHistoryLoadParameters, isInit = false): Promise<void> {
     const busy = this.busyService.beginBusy();
-    this.selectionHydrationCache.clear();
 
     if (newState) {
       this.navigationState = newState;
@@ -357,7 +310,7 @@ export class RequestTableComponent implements OnInit, OnDestroy {
 
       // We check here if we have a default config, if so then we will skip the init data to save time
       let data: ExtendedTypedEntityCollection<ItshopRequest, PwoExtendedData>;
-      if (isInit) {
+      if (isInit && this.viewConfigService.isDefaultConfigSet()) {
         // We don't waste time on the call as the view config hasn't been set yet.
         data = {
           totalCount: 0,
@@ -366,24 +319,20 @@ export class RequestTableComponent implements OnInit, OnDestroy {
       } else {
         data = this.isArchivedRequests
           ? await this.requestHistoryService.getArchivedRequests(this.userUid, this.uidRecipient)
-          : await this.requestHistoryService.getRequests(this.userUid, this.navigationState);
+          : this.actionMode === 'revoke'
+            ? await this.requestHistoryService.getRevokeRequests(this.userUid, this.navigationState)
+            : await this.requestHistoryService.getRequests(this.userUid, this.navigationState);
       }
       let exportMethod: DataSourceToolbarExportMethod;
       // TODO 409926: Api needs to allow exporting of archived requests
-      if (!this.isArchivedRequests) {
+      if (!this.isArchivedRequests && this.actionMode !== 'revoke') {
         exportMethod = this.requestHistoryService.exportRequests(this.navigationState);
         exportMethod.initialColumns = this.displayedColumns.map((col) => col.ColumnName);
       }
-      // NS20260610 Set default filters on request history overview: Scope = Requests submitted by you for yourself, Status = Active
-      //const person = this.filterOptions.findIndex((elem) => elem.Name === 'person');
-      //this.filterOptions[person].InitialValue = '1';
-      const status = this.filterOptions.findIndex((elem) => elem.Name === 'status');
-      this.filterOptions[status].InitialValue = '1,2';
-      
       if (data) {
         const dstSettings: DataSourceToolbarSettings = {
           dataSource: {
-            ...data,
+            totalCount: data.totalCount,
             Data: data.Data ? this.sortChildrenAfterParents(data.Data) : undefined,
           },
           filters: this.filterOptions,
@@ -400,6 +349,8 @@ export class RequestTableComponent implements OnInit, OnDestroy {
         } else {
           this.dstSettings = dstSettings;
         }
+      } else {
+        this.dstSettings = undefined;
       }
     } finally {
       busy.endBusy();
@@ -411,18 +362,16 @@ export class RequestTableComponent implements OnInit, OnDestroy {
   }
 
   public async viewDetails(pwo: ItshopRequest): Promise<void> {
-    const hydratedPwo = await this.getHydratedSelectionItem(pwo, new AbortController().signal);
-
     await this.sideSheet
       .open(RequestDetailComponent, {
         title: await this.translator.get('#LDS#Heading View Request Details').toPromise(),
-        subTitle: hydratedPwo.GetEntity().GetDisplay(),
+        subTitle: pwo.GetEntity().GetDisplay(),
         padding: '0px',
         width: 'max(700px, 60%)',
         testId: 'request-table-view-request-details',
         data: {
           isReadOnly: this.isReadOnly,
-          personWantsOrg: hydratedPwo,
+          personWantsOrg: pwo,
           itShopConfig: this.itShopConfig,
           userUid: this.userUid,
         },

@@ -86,7 +86,30 @@
 <div class="imx-button-bar" *ngIf="!isReadOnly && !isArchivedRequests">
   <imx-selected-elements [selectedElements]="selectedItems"></imx-selected-elements>
  <div class="imx-menu-spacer"></div>
+
+  <ng-container *ngIf="actionMode === 'revoke'">
+    <button
+      *ngIf="selectedItems.length > 0 && canUnsubscribeRequest"
+      mat-flat-button
+      color="primary"
+      data-imx-identifier="revoke-requests-unsubscribe"
+      (click)="actionService.unsubscribe(selectedItems)"
+    >
+      {{ '#LDS#Unsubscribe product' | translate }}
+    </button>
+
+    <button
+      *ngIf="selectedItems.length > 0 && canWithdrawRequest"
+      mat-flat-button
+      color="primary"
+      data-imx-identifier="revoke-requests-cancel"
+      (click)="actionService.withdrawRequest(selectedItems)"
+    >
+      {{ '#LDS#Cancel request' | translate }}
+    </button>
+  </ng-container>
   <button
+    *ngIf="actionMode !== 'revoke'"
     mat-stroked-button
     data-imx-identifier="requests-history-button-actions"
     title="{{ '#LDS#Actions' | translate }}"

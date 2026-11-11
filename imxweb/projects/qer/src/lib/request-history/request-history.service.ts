@@ -52,8 +52,6 @@ import { ItshopRequestService } from '../itshop/itshop-request.service';
 
 @Injectable()
 export class RequestHistoryService {
-  public abortController = new AbortController();
-
   constructor(private readonly qerClient: QerApiService, private readonly itshopRequest: ItshopRequestService) {}
 
   public get PortalItshopRequestsSchema(): EntitySchema {
@@ -64,41 +62,91 @@ export class RequestHistoryService {
     userUid: string,
     parameters: RequestHistoryLoadParameters
   ): Promise<ExtendedTypedEntityCollection<ItshopRequest, PwoExtendedData>> {
-    const lightweightParameters = { ...parameters, Lightweight: true };
-    const collection = await this.qerClient.typedClient.PortalItshopRequests.Get(lightweightParameters, { signal: this.abortController.signal });
+    const collection = await this.qerClient.typedClient.PortalItshopRequests.Get(parameters);
 
-    if (!collection) {
-      return undefined;
-    }
-
-    return this.buildRequestCollection(userUid, collection);
-  }
-
-  public async getRequest(userUid: string, uidPwo: string, signal: AbortSignal): Promise<ItshopRequest> {
-    const collection = await this.qerClient.typedClient.PortalItshopRequests.Get(
-      { uidpwo: uidPwo, PageSize: 1, StartIndex: 0, Lightweight: false },
-      { signal }
-    );
-
-    if (!collection) {
-      return undefined;
-    }
-
-    return this.buildRequestCollection(userUid, collection).Data[0];
-  }
-
-  private buildRequestCollection(
-    userUid: string,
-    collection: ExtendedTypedEntityCollection<PortalItshopRequests, PwoExtendedData>
-  ): ExtendedTypedEntityCollection<ItshopRequest, PwoExtendedData> {
     return {
-      ...collection,
+      tableName: collection.tableName,
+      totalCount: collection.totalCount,
+      extendedData: collection.extendedData,
       Data: collection.Data.map((element, index) => {
         const requestData = new ItshopRequestData({ ...collection.extendedData, ...{ index } });
         const parameterColumns = this.itshopRequest.createParameterColumns(element.GetEntity(), requestData.parameters);
         return new ItshopRequest(element.GetEntity(), requestData.pwoData, parameterColumns, userUid);
       }),
     };
+  }
+
+  /**
+   * Loads requests in batches, applies a client-side permission predicate,
+   * and then returns the requested page from the filtered result.
+   */
+  private async getFilteredRequests(
+    userUid: string,
+    parameters: RequestHistoryLoadParameters,
+    predicate: (request: ItshopRequest) => boolean
+  ): Promise<ExtendedTypedEntityCollection<ItshopRequest, PwoExtendedData>> {
+    const requestedStartIndex = parameters.StartIndex ?? 0;
+    const requestedPageSize = parameters.PageSize ?? 20;
+    const batchSize = Math.max(250, requestedPageSize);
+
+    const loadParameters: RequestHistoryLoadParameters = {
+      ...parameters,
+      StartIndex: 0,
+      PageSize: batchSize,
+    };
+
+    let firstCollection: ExtendedTypedEntityCollection<ItshopRequest, PwoExtendedData> | undefined;
+    let rawStartIndex = 0;
+    let rawTotalCount = 0;
+    const matchingRequests: ItshopRequest[] = [];
+
+    do {
+      const collection = await this.getRequests(userUid, {
+        ...loadParameters,
+        StartIndex: rawStartIndex,
+        PageSize: batchSize,
+      });
+
+      if (!firstCollection) {
+        firstCollection = collection;
+      }
+
+      matchingRequests.push(...collection.Data.filter(predicate));
+      rawStartIndex += collection.Data.length;
+      rawTotalCount = collection.totalCount ?? rawStartIndex;
+
+      if (collection.Data.length === 0) {
+        break;
+      }
+    } while (rawStartIndex < rawTotalCount);
+
+    if (!firstCollection) {
+      return {
+        totalCount: 0,
+        Data: [],
+      };
+    }
+
+    return {
+      ...firstCollection,
+      Data: matchingRequests.slice(requestedStartIndex, requestedStartIndex + requestedPageSize),
+      totalCount: matchingRequests.length,
+    };
+  }
+
+  /**
+   * Revoke Requests contains both assigned products that may be unsubscribed
+   * and running requests that may be cancelled.
+   */
+  public async getRevokeRequests(
+    userUid: string,
+    parameters: RequestHistoryLoadParameters
+  ): Promise<ExtendedTypedEntityCollection<ItshopRequest, PwoExtendedData>> {
+    return this.getFilteredRequests(
+      userUid,
+      parameters,
+      (request) => request.UnsubscribeRequestAllowed.value || request.CancelRequestAllowed.value
+    );
   }
 
   public exportRequests(parameters: RequestHistoryLoadParameters): DataSourceToolbarExportMethod {
@@ -122,21 +170,21 @@ export class RequestHistoryService {
   ): Promise<ExtendedTypedEntityCollection<ItshopRequest, PwoExtendedData>> {
     const dummy: ArchivedRequestHistoryLoadParameters = {};
     recipientId ? (dummy.uidpersonordered = recipientId) : (dummy.uidpersoninserted = userUid);
-    const collection = await this.qerClient.typedClient.PortalItshopHistoryRequests.Get(new Date(), dummy, {
-      signal: this.abortController.signal,
-    });
-    if (!collection) {
-      return undefined;
-    }
+    const collection = await this.qerClient.typedClient.PortalItshopHistoryRequests.Get(new Date(), dummy);
     return {
-      ...collection,
+      tableName: collection.tableName,
+      totalCount: collection.totalCount,
+      extendedData: collection.extendedData,
       Data: collection.Data.map((element, index) => {
         const requestData = new ItshopRequestData({ ...collection.extendedData, ...{ index } });
-        const parameterColumns = this.itshopRequest.createParameterColumns(element.GetEntity(), requestData.parameters);
+        const parameterColumns = this.itshopRequest.createParameterColumns(
+          element.GetEntity(),
+          requestData.parameters
+        );
         const request = new ItshopRequest(element.GetEntity(), requestData.pwoData, parameterColumns, userUid);
         request.isArchived = true;
-        return request;
-      }),
+        return request
+      })
     };
   }
 
@@ -157,11 +205,8 @@ export class RequestHistoryService {
   //   }
   // }
 
-  public async getFilterOptions(userUid: string, filterPresets: { [name: string]: string } = {}, dataModel?: DataModel ): Promise<DataSourceToolbarFilter[]> {
-    if (!dataModel) {
-      dataModel = await this.getDataModel(userUid);
-    }
-    return dataModel.Filters.map((option: DataSourceToolbarFilter) => {
+  public async getFilterOptions(userUid: string, filterPresets: { [name: string]: string } = {}): Promise<DataSourceToolbarFilter[]> {
+    return (await this.getDataModel(userUid)).Filters.map((option: DataSourceToolbarFilter) => {
       option.InitialValue = filterPresets[option.Name];
       return option;
     });
@@ -214,7 +259,7 @@ export class RequestHistoryService {
   public async copyRequest(pwo: PortalItshopRequests): Promise<PortalCartitem> {
     const item = this.qerClient.typedClient.PortalCartitem.createEntity({
       Columns: {
-        UID_AccProduct: { Value: pwo.UID_AccProduct.value },
+        UID_AccProduct: {Value:pwo.UID_AccProduct.value}
       },
     });
 
@@ -224,10 +269,5 @@ export class RequestHistoryService {
     await this.qerClient.typedClient.PortalCartitem.Post(item);
 
     return item;
-  }
-
-  public abortCall(): void {
-    this.abortController.abort();
-    this.abortController = new AbortController();
   }
 }

@@ -83,7 +83,6 @@ export { ServiceItemDetailComponent } from './lib/itshop/request-info/service-it
 export { ShelfService } from './lib/itshop/shelf.service';
 export { WorkflowDataWrapper } from './lib/itshop/workflow-data-wrapper';
 export { ApprovalsModule } from './lib/itshopapprove/approvals.module';
-export { buildWorkingStepsOrdered } from './lib/itshop/request-info/step-helper';
 export { ApprovalWorkFlowModule } from './lib/approval-workflows/approval-workflows.module';
 export { DecisionStepSevice } from './lib/itshopapprove/decision-step.service';
 export { RecommendationSidesheetComponent } from './lib/itshopapprove/recommendation-sidesheet/recommendation-sidesheet.component';
@@ -128,6 +127,7 @@ export { ItshopRequest } from './lib/request-history/itshop-request';
 export { RequestDisplayComponent } from './lib/request-history/request-display/request-display.component';
 export { RequestHistoryFilterComponent } from './lib/request-history/request-history-filter/request-history-filter.component';
 export { RequestHistoryModule } from './lib/request-history/request-history.module';
+export { RevokeRequestsModule } from './lib/revoke-requests/revoke-requests.module';
 export { RequestTableComponent } from './lib/request-history/request-table.component';
 export { RequestsFeatureGuardService } from './lib/requests-feature-guard.service';
 export { ResourcesModule } from './lib/resources/resources.module';

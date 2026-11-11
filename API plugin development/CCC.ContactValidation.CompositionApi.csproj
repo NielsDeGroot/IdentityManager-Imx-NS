@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+
+    <AssemblyName>CCC.ContactValidation.CompositionApi</AssemblyName>
+
+    <Version>1.0.2</Version>
+    <AssemblyVersion>1.0.2.0</AssemblyVersion>
+    <FileVersion>1.0.2.0</FileVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+
+    <Reference Include="QER.CompositionApi">
+      <HintPath>lib\OneIM92\QER.CompositionApi.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+    <Reference Include="QBM.CompositionApi">
+      <HintPath>lib\OneIM92\QBM.CompositionApi.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+    <Reference Include="VI.DB">
+      <HintPath>lib\OneIM92\VI.DB.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+    <Reference Include="VI.Base">
+      <HintPath>lib\OneIM92\VI.Base.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+  </ItemGroup>
+
+</Project>
